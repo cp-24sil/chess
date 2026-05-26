@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chess</title>
+</head>
+
+<body>
+    <canvas id="display" width="400" height="400"></canvas>
+
+    <h1>White:</h1>
+    <h1>Black:</h1>
+    <p id="message">true</p>
+    <script>
+        const canvas = document.getElementById("display");
+        canvas.addEventListener("click", onClick);
+        /** @type {CanvasRenderingContext2D} */
+        const ctx = canvas.getContext("2d");
+        const plateau = [];
+        const CELL_SIZE = 50;
+        let isWhiteTurn = true;
+        let selectedPion = null;
+        let isWhite;
+        let canA = true;
+        let canB = true;
+        let canC = true;
+        let canD = true;
+
+        document.getElementById("message").innerHTML = isWhiteTurn;
+
+        init();
+
+        function init() {
+            for (let y = 0; y < 8; y++) {
+                plateau[y] = [];
+                for (let x = 0; x < 8; x++) {
+                    if ((x + y) % 2 !== 0) {
+                        plateau[y][x] = {
+                            colorIndex: "black",
+                            piece: "",
+                        }
+                    }
+                    else {
+                        plateau[y][x] = {
+                            colorIndex: "white",
+                            piece: "",
+                        }
+                    }
+                    if (y == 0 || y == 7) {
+                        if (y == 0)
+                            isWhite = false;
+                        if (y == 7)
+                            isWhite = true;
+                        switch (x) {
+                            case 0:
+                                plateau[y][x].piece = "t";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                            case 1:
+                                plateau[y][x].piece = "c";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                            case 2:
+                                plateau[y][x].piece = "f";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                            case 3:
+                                plateau[y][x].piece = "Q";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                            case 4:
+                                plateau[y][x].piece = "K";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                            case 5:
+                                plateau[y][x].piece = "f";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                            case 6:
+                                plateau[y][x].piece = "c";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                            case 7:
+                                plateau[y][x].piece = "t";
+                                plateau[y][x].isWhite = isWhite;
+                                break;
+                        }
+                    }
+                    else if (y == 1 || y == 6) {
+                        if (y == 1) {
+                            isWhite = false;
+                        } else if (y == 6) {
+                            isWhite = true;
+                        }
+                        plateau[y][x].piece = "p";
+                        plateau[y][x].isWhite = isWhite;
+                    }
+                }
+            }
+            refresh();
+        }
+
+        function refresh() {
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
+                    ctx.fillStyle = plateau[y][x].colorIndex;
+                    ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    if ((x + y) % 2 !== 0) {
+                        ctx.fillStyle = "white";
+                    }
+                    else {
+                        ctx.fillStyle = "black";
+                    }
+                    ctx.fillText(plateau[y][x].piece == null ? "" : plateau[y][x].piece, x * CELL_SIZE + 25, y * CELL_SIZE + 25);
+                    ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                }
+            }
+        }
+
+        function rebuild() {
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
+                    if ((x + y) % 2 === 0) {
+                        plateau[y][x].colorIndex = "white";
+                    }
+                    else {
+                        plateau[y][x].colorIndex = "black";
+                    }
+                }
+            }
+        }
+
+        function onClick(e) {
+            const posX = Math.floor(e.clientX / 50);
+            const posY = Math.floor(e.clientY / 50);
+            if (selectedPion != null) {
+                switch (selectedPion.plateau.piece) {
+                    case "p":
+                        console.log(selectedPion);
+                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
+                            plateau[posY][posX].piece = "p";
+                            plateau[posY][posX].isWhite = isWhiteTurn;
+                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
+                            console.log(posX);
+                            rebuild();
+                            isWhiteTurn = !isWhiteTurn;
+                            document.getElementById("message").innerHTML = isWhiteTurn;
+                            refresh();
+                        } else {
+                            rebuild();
+                            refresh();
+                        }
+                        break;
+                    case "t":
+                        console.log(selectedPion);
+                        break;
+                    case "c":
+                        console.log(selectedPion);
+                        break;
+                    case "f":
+                        console.log(selectedPion);
+                        break;
+                    case "Q":
+                        console.log(selectedPion);
+                        break;
+                    case "K":
+                        console.log(selectedPion);
+                        break;
+                }
+                selectedPion = null;
+                refresh();
+            } else {
+                if (posX < plateau.length && posY < plateau.length) {
+                    selectedPion = { plateau: plateau[posY][posX], posX: posX, posY: posY };
+                    avadaKedavra(posX, posY);
+                }
+                refresh();
+            }
+        }
+
+        function avadaKedavra(x, y) {
+            switch (selectedPion.plateau.piece) {
+                case "p":
+                    if (isWhiteTurn == true)
+                        if (plateau[y][x].isWhite === true) {
+                            if (plateau[y - 1][x].piece === "")
+                                plateau[y - 1][x].colorIndex = "lightblue";
+                            if (y == 6)
+                                plateau[y - 2][x].colorIndex = "lightblue";
+                            if (x - 1 >= 0 && plateau[y - 1][x - 1].piece !== "" && plateau[y - 1][x - 1].isWhite !== plateau[y][x].isWhite)
+                                plateau[y - 1][x - 1].colorIndex = "lightcoral";
+                            if (x + 1 < 8 && plateau[y - 1][x + 1].piece !== "" && plateau[y - 1][x + 1].isWhite !== plateau[y][x].isWhite)
+                                plateau[y - 1][x + 1].colorIndex = "lightcoral";
+                        } else {
+                            selectedPion = null;
+                        }
+                    if (isWhiteTurn === false)
+                        if (plateau[y][x].isWhite === false) {
+                            if (plateau[y + 1][x].piece === "")
+                                plateau[y + 1][x].colorIndex = "lightblue";
+                            if (y == 1)
+                                plateau[y + 2][x].colorIndex = "lightblue";
+                            if (x + 1 < 8 && plateau[y + 1][x + 1].piece !== "" && plateau[y + 1][x + 1].isWhite !== plateau[y][x].isWhite)
+                                plateau[y + 1][x + 1].colorIndex = "lightcoral";
+                            if (x - 1 >= 0 && plateau[y + 1][x - 1].piece !== "" && plateau[y + 1][x - 1].isWhite !== plateau[y][x].isWhite)
+                                plateau[y + 1][x - 1].colorIndex = "lightcoral";
+                        } else {
+                            selectedPion = null;
+                        }
+                    break;
+                case "t":
+                    for (let i = y; i > 0; i--) {
+                        if (plateau[i - 1][x].piece === "")
+                            plateau[i - 1][x].colorIndex = "lightblue";
+                        else {
+                            break;
+                        }
+                    }
+                    for (let i = y + 1; i < 8; i++) {
+                        if (plateau[i][x].piece === "")
+                            plateau[i][x].colorIndex = "lightblue";
+                        else {
+                            break;
+                        }
+                    }
+                    for (let i = x; i > 0; i--) {
+                        if (plateau[y][i - 1].piece === "")
+                            plateau[y][i - 1].colorIndex = "lightblue";
+                        else {
+                            break;
+                        }
+                    }
+                    for (let i = x + 1; i < 8; i++) {
+                        if (plateau[y][i].piece === "")
+                            plateau[y][i].colorIndex = "lightblue";
+                        else {
+                            break;
+                        }
+                    }
+                    break;
+                case "c":
+                    if (y - 2 >= 0) {
+                        if (x - 1 >= 0)
+                            if (plateau[y - 2][x - 1].piece === "")
+                                plateau[y - 2][x - 1].colorIndex = "lightblue";
+                        if (x + 1 < 8)
+                            if (plateau[y - 2][x + 1].piece === "")
+                                plateau[y - 2][x + 1].colorIndex = "lightblue";
+                    }
+                    if (y - 1 >= 0) {
+                        if (x - 2 >= 0)
+                            if (plateau[y - 1][x - 2].piece === "")
+                                plateau[y - 1][x - 2].colorIndex = "lightblue";
+                        if (x + 2 < 8)
+                            if (plateau[y - 1][x + 2].piece === "")
+                                plateau[y - 1][x + 2].colorIndex = "lightblue";
+                    }
+                    if (y + 1 < 8) {
+                        if (x + 2 < 8)
+                            if (plateau[y + 1][x + 2].piece === "")
+                                plateau[y + 1][x + 2].colorIndex = "lightblue";
+                        if (x - 2 >= 0)
+                            if (plateau[y + 1][x - 2].piece === "")
+                                plateau[y + 1][x - 2].colorIndex = "lightblue";
+                    }
+                    if (y + 2 < 8) {
+                        if (x - 1 >= 0)
+                            if (plateau[y + 2][x - 1].piece === "")
+                                plateau[y + 2][x - 1].colorIndex = "lightblue";
+                        if (x + 1 < 8)
+                            if (plateau[y + 2][x + 1].piece === "")
+                                plateau[y + 2][x + 1].colorIndex = "lightblue";
+                    }
+                    break;
+                case "f":
+                    console.log(selectedPion);
+                    let Fa = x;
+                    let Fb = y;
+                    canA = true;
+                    canB = true;
+                    canC = true;
+                    canD = true;
+                    for (let i = 1; i < 8; i++) {
+                        if (Fb - i >= 0) {
+                            if (Fa - i >= 0)
+                                if (plateau[Fb - i][Fa - i].piece === "" && canA === true)
+                                    plateau[Fb - i][Fa - i].colorIndex = "lightblue";
+                                else canA = false;
+                            if (Fa + i < 8)
+                                if (plateau[Fb - i][Fa + i].piece === "" && canB === true)
+                                    plateau[Fb - i][Fa + i].colorIndex = "lightblue";
+                                else canB = false;
+                        }
+                        if (Fb + i < 8) {
+                            if (Fa - i >= 0)
+                                if (plateau[Fb + i][Fa - i].piece === "" && canC === true)
+                                    plateau[Fb + i][Fa - i].colorIndex = "lightblue";
+                                else canC = false;
+                            if (Fa + i < 8)
+                                if (plateau[Fb + i][Fa + i].piece === "" && canD === true)
+                                    plateau[Fb + i][Fa + i].colorIndex = "lightblue";
+                                else canD = false;
+                        }
+                    }
+                    break;
+                case "Q":
+                    console.log(selectedPion);
+                    let Qa = x;
+                    let Qb = y;
+                    canA = true;
+                    canB = true;
+                    canC = true;
+                    canD = true;
+                    for (let i = 1; i < 8; i++) {
+                        if (Qb - i >= 0) {
+                            if (Qa - i >= 0)
+                                if (plateau[Qb - i][Qa - i].piece === "" && canA === true)
+                                    plateau[Qb - i][Qa - i].colorIndex = "lightblue";
+                                else canA = false;
+                            if (Qa + i < 8)
+                                if (plateau[Qb - i][Qa + i].piece === "" && canB === true)
+                                    plateau[Qb - i][Qa + i].colorIndex = "lightblue";
+                                else canB = false;
+                        }
+                        if (Qb + i < 8) {
+                            if (Qa - i >= 0)
+                                if (plateau[Qb + i][Qa - i].piece === "" && canC === true)
+                                    plateau[Qb + i][Qa - i].colorIndex = "lightblue";
+                                else canC = false;
+                            if (Qa + i < 8)
+                                if (plateau[Qb + i][Qa + i].piece === "" && canD === true)
+                                    plateau[Qb + i][Qa + i].colorIndex = "lightblue";
+                                else canD = false;
+                        }
+                    }
+                    canA = true;
+                    canB = true;
+                    canC = true;
+                    canD = true;
+                    for (let i = y; i > 0; i--) {
+                        if (plateau[i - 1][x].piece === "" && canA === true)
+                            plateau[i - 1][x].colorIndex = "lightblue";
+                        else canA = false;
+                    }
+                    for (let i = y + 1; i < 8; i++) {
+                        if (plateau[i][x].piece === "" && canB === true)
+                            plateau[i][x].colorIndex = "lightblue";
+                        else canB = false;
+
+                    }
+                    for (let i = x; i > 0; i--) {
+                        if (plateau[y][i - 1].piece === "" && canC === true)
+                            plateau[y][i - 1].colorIndex = "lightblue";
+                        else canC = false;
+                    }
+                    for (let i = x + 1; i < 8; i++) {
+                        if (plateau[y][i].piece === "" && canD === true)
+                            plateau[y][i].colorIndex = "lightblue";
+                        else canD = false;
+                    }
+                    break;
+                case "K":
+                    console.log(selectedPion);
+                    let Ka = x;
+                    let Kb = y;
+                    if (Kb - 1 >= 0) {
+                        if (Ka - 1 >= 0)
+                            if (plateau[Kb - 1][Ka - 1].piece === "")
+                                plateau[Kb - 1][Ka - 1].colorIndex = "lightblue";
+                        if (Ka + 1 < 8)
+                            if (plateau[Kb - 1][Ka + 1].piece === "")
+                                plateau[Kb - 1][Ka + 1].colorIndex = "lightblue";
+                        if (plateau[Kb - 1][Ka].piece === "")
+                            plateau[Kb - 1][Ka].colorIndex = "lightblue";
+                    }
+                    if (Kb + 1 < 8) {
+                        if (Ka - 1 >= 0)
+                            if (plateau[Kb + 1][Ka - 1].piece === "")
+                                plateau[Kb + 1][Ka - 1].colorIndex = "lightblue";
+                        if (Ka + 1 < 8)
+                            if (plateau[Kb + 1][Ka + 1].piece === "")
+                                plateau[Kb + 1][Ka + 1].colorIndex = "lightblue";
+                        if (plateau[Kb + 1][Ka].piece === "")
+                            plateau[Kb + 1][Ka].colorIndex = "lightblue";
+                    }
+                    if (Ka + 1 < 8)
+                        if (plateau[Kb][Ka + 1].piece === "")
+                            plateau[Kb][Ka + 1].colorIndex = "lightblue";
+                    if (Ka - 1 >= 0)
+                        if (plateau[Kb][Ka - 1].piece === "")
+                            plateau[Kb][Ka - 1].colorIndex = "lightblue";
+                    break;
+            }
+        }
+    </script>
+</body>
+
+</html>
