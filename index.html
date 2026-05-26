@@ -138,12 +138,10 @@
             if (selectedPion != null) {
                 switch (selectedPion.plateau.piece) {
                     case "p":
-                        console.log(selectedPion);
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
                             plateau[posY][posX].piece = "p";
                             plateau[posY][posX].isWhite = isWhiteTurn;
                             plateau[selectedPion.posY][selectedPion.posX].piece = "";
-                            console.log(posX);
                             rebuild();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
@@ -154,7 +152,6 @@
                         }
                         break;
                     case "t":
-                        console.log(selectedPion);
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
                             plateau[posY][posX].piece = "t";
                             plateau[posY][posX].isWhite = isWhiteTurn;
@@ -167,10 +164,8 @@
                             rebuild();
                             refresh();
                         }
-
                         break;
                     case "c":
-                        console.log(selectedPion);
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
                             plateau[posY][posX].piece = "c";
                             plateau[posY][posX].isWhite = isWhiteTurn;
@@ -185,7 +180,6 @@
                         }
                         break;
                     case "f":
-                        console.log(selectedPion);
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
                             plateau[posY][posX].piece = "f";
                             plateau[posY][posX].isWhite = isWhiteTurn;
@@ -200,7 +194,6 @@
                         }
                         break;
                     case "Q":
-                        console.log(selectedPion);
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
                             plateau[posY][posX].piece = "Q";
                             plateau[posY][posX].isWhite = isWhiteTurn;
@@ -215,7 +208,6 @@
                         }
                         break;
                     case "K":
-                        console.log(selectedPion);
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
                             plateau[posY][posX].piece = "K";
                             plateau[posY][posX].isWhite = isWhiteTurn;
@@ -244,12 +236,13 @@
         function avadaKedavra(x, y) {
             switch (selectedPion.plateau.piece) {
                 case "p":
-                    if (isWhiteTurn == true)
+                    if (isWhiteTurn === true)
                         if (plateau[y][x].isWhite === true) {
                             if (plateau[y - 1][x].piece === "")
                                 plateau[y - 1][x].colorIndex = "lightblue";
                             if (y == 6)
-                                plateau[y - 2][x].colorIndex = "lightblue";
+                                if (plateau[y - 1][x].piece === "")
+                                    plateau[y - 2][x].colorIndex = "lightblue";
                             if (x - 1 >= 0 && plateau[y - 1][x - 1].piece !== "" && plateau[y - 1][x - 1].isWhite !== plateau[y][x].isWhite)
                                 plateau[y - 1][x - 1].colorIndex = "lightcoral";
                             if (x + 1 < 8 && plateau[y - 1][x + 1].piece !== "" && plateau[y - 1][x + 1].isWhite !== plateau[y][x].isWhite)
@@ -262,7 +255,8 @@
                             if (plateau[y + 1][x].piece === "")
                                 plateau[y + 1][x].colorIndex = "lightblue";
                             if (y == 1)
-                                plateau[y + 2][x].colorIndex = "lightblue";
+                                if (plateau[y + 1][x].piece === "")
+                                    plateau[y + 2][x].colorIndex = "lightblue";
                             if (x + 1 < 8 && plateau[y + 1][x + 1].piece !== "" && plateau[y + 1][x + 1].isWhite !== plateau[y][x].isWhite)
                                 plateau[y + 1][x + 1].colorIndex = "lightcoral";
                             if (x - 1 >= 0 && plateau[y + 1][x - 1].piece !== "" && plateau[y + 1][x - 1].isWhite !== plateau[y][x].isWhite)
@@ -277,7 +271,7 @@
                             if (plateau[i - 1][x].piece === "")
                                 plateau[i - 1][x].colorIndex = "lightblue";
                             else if (plateau[i - 1][x].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[i - 1][x].colorIndex = "lightblue";
+                                plateau[i - 1][x].colorIndex = "lightcoral";
                                 break;
                             }
                             else {
@@ -289,7 +283,7 @@
                             if (plateau[i][x].piece === "")
                                 plateau[i][x].colorIndex = "lightblue";
                             else if (plateau[i][x].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[i][x].colorIndex = "lightblue";
+                                plateau[i][x].colorIndex = "lightcoral";
                                 break;
                             }
                             else {
@@ -301,7 +295,7 @@
                             if (plateau[y][i - 1].piece === "")
                                 plateau[y][i - 1].colorIndex = "lightblue";
                             else if (plateau[y][i - 1].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[y][i - 1].colorIndex = "lightblue";
+                                plateau[y][i - 1].colorIndex = "lightcoral";
                                 break;
                             }
                             else {
@@ -313,7 +307,7 @@
                             if (plateau[y][i].piece === "")
                                 plateau[y][i].colorIndex = "lightblue";
                             else if (plateau[y][i].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[y][i].colorIndex = "lightblue";
+                                plateau[y][i].colorIndex = "lightcoral";
                                 break;
                             }
                             else {
@@ -326,35 +320,67 @@
                     if (selectedPion.plateau.isWhite === isWhiteTurn) {
                         if (y - 2 >= 0) {
                             if (x - 1 >= 0)
-                                if (plateau[y - 2][x - 1].piece === "" || plateau[y - 2][x - 1].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y - 2][x - 1].piece === "" || plateau[y - 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y - 2][x - 1].colorIndex = "lightblue";
+                                    if (plateau[y - 2][x - 1].piece !== "" && plateau[y - 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y - 2][x - 1].colorIndex = "lightcoral";
+                                    }
+                                }
                             if (x + 1 < 8)
-                                if (plateau[y - 2][x + 1].piece === "" || plateau[y - 2][x + 1].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y - 2][x + 1].piece === "" || plateau[y - 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y - 2][x + 1].colorIndex = "lightblue";
+                                    if (plateau[y - 2][x + 1].piece !== "" && plateau[y - 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y - 2][x + 1].colorIndex = "lightcoral";
+                                    }
+                                }
                         }
                         if (y - 1 >= 0) {
                             if (x - 2 >= 0)
-                                if (plateau[y - 1][x - 2].piece === "" || plateau[y - 1][x - 2].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y - 1][x - 2].piece === "" || plateau[y - 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y - 1][x - 2].colorIndex = "lightblue";
+                                    if (plateau[y - 1][x - 2].piece !== "" && plateau[y - 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y - 1][x - 2].colorIndex = "lightcoral";
+                                    }
+                                }
                             if (x + 2 < 8)
-                                if (plateau[y - 1][x + 2].piece === "" || plateau[y - 1][x + 2].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y - 1][x + 2].piece === "" || plateau[y - 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y - 1][x + 2].colorIndex = "lightblue";
+                                    if (plateau[y - 1][x + 2].piece !== "" && plateau[y - 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y - 1][x + 2].colorIndex = "lightcoral";
+                                    }
+                                }
                         }
                         if (y + 1 < 8) {
                             if (x + 2 < 8)
-                                if (plateau[y + 1][x + 2].piece === "" || plateau[y + 1][x + 2].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y + 1][x + 2].piece === "" || plateau[y + 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y + 1][x + 2].colorIndex = "lightblue";
+                                    if (plateau[y + 1][x + 2].piece !== "" && plateau[y + 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y + 1][x + 2].colorIndex = "lightcoral";
+                                    }
+                                }
                             if (x - 2 >= 0)
-                                if (plateau[y + 1][x - 2].piece === "" || plateau[y + 1][x - 2].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y + 1][x - 2].piece === "" || plateau[y + 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y + 1][x - 2].colorIndex = "lightblue";
+                                    if (plateau[y + 1][x - 2].piece !== "" && plateau[y + 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y + 1][x - 2].colorIndex = "lightcoral";
+                                    }
+                                }
                         }
                         if (y + 2 < 8) {
                             if (x - 1 >= 0)
-                                if (plateau[y + 2][x - 1].piece === "" || plateau[y + 2][x - 1].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y + 2][x - 1].piece === "" || plateau[y + 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y + 2][x - 1].colorIndex = "lightblue";
+                                    if (plateau[y + 2][x - 1].piece !== "" && plateau[y + 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y + 2][x - 1].colorIndex = "lightcoral";
+                                    }
+                                }
                             if (x + 1 < 8)
-                                if (plateau[y + 2][x + 1].piece === "" || plateau[y + 2][x + 1].isWhite != selectedPion.plateau.isWhite)
+                                if (plateau[y + 2][x + 1].piece === "" || plateau[y + 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
                                     plateau[y + 2][x + 1].colorIndex = "lightblue";
+                                    if (plateau[y + 2][x + 1].piece !== "" && plateau[y + 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
+                                        plateau[y + 2][x + 1].colorIndex = "lightcoral";
+                                    }
+                                }
                         }
                     } else {
                         rebuild();
