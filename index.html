@@ -216,6 +216,18 @@
                         break;
                     case "K":
                         console.log(selectedPion);
+                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
+                            plateau[posY][posX].piece = "K";
+                            plateau[posY][posX].isWhite = isWhiteTurn;
+                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
+                            rebuild();
+                            isWhiteTurn = !isWhiteTurn;
+                            document.getElementById("message").innerHTML = isWhiteTurn;
+                            refresh();
+                        } else {
+                            rebuild();
+                            refresh();
+                        }
                         break;
                 }
                 selectedPion = null;
@@ -517,32 +529,56 @@
                     console.log(selectedPion);
                     let Ka = x;
                     let Kb = y;
-                    if (Kb - 1 >= 0) {
-                        if (Ka - 1 >= 0)
-                            if (plateau[Kb - 1][Ka - 1].piece === "")
-                                plateau[Kb - 1][Ka - 1].colorIndex = "lightblue";
-                        if (Ka + 1 < 8)
-                            if (plateau[Kb - 1][Ka + 1].piece === "")
-                                plateau[Kb - 1][Ka + 1].colorIndex = "lightblue";
-                        if (plateau[Kb - 1][Ka].piece === "")
-                            plateau[Kb - 1][Ka].colorIndex = "lightblue";
+                    if (plateau[Kb][Ka].isWhite === isWhiteTurn) {
+                        if (Kb - 1 >= 0) {
+                            if (Ka - 1 >= 0) {
+                                if (plateau[Kb - 1][Ka - 1].piece === "")
+                                    plateau[Kb - 1][Ka - 1].colorIndex = "lightblue";
+                                else if (plateau[Kb - 1][Ka - 1].isWhite !== isWhiteTurn)
+                                    plateau[Kb - 1][Ka - 1].colorIndex = "lightcoral";
+                            }
+                            if (Ka + 1 < 8) {
+                                if (plateau[Kb - 1][Ka + 1].piece === "")
+                                    plateau[Kb - 1][Ka + 1].colorIndex = "lightblue";
+                                else if (plateau[Kb - 1][Ka + 1].isWhite !== isWhiteTurn)
+                                    plateau[Kb - 1][Ka + 1].colorIndex = "lightcoral";
+                            }
+                            if (plateau[Kb - 1][Ka].piece === "")
+                                plateau[Kb - 1][Ka].colorIndex = "lightblue";
+                            else if (plateau[Kb - 1][Ka].isWhite !== isWhiteTurn)
+                                plateau[Kb - 1][Ka].colorIndex = "lightcoral";
+                        }
+                        if (Kb + 1 < 8) {
+                            if (Ka - 1 >= 0) {
+                                if (plateau[Kb + 1][Ka - 1].piece === "")
+                                    plateau[Kb + 1][Ka - 1].colorIndex = "lightblue";
+                                else if (plateau[Kb + 1][Ka - 1].isWhite !== isWhiteTurn)
+                                    plateau[Kb + 1][Ka - 1].colorIndex = "lightcoral";
+                            } if (Ka + 1 < 8) {
+                                if (plateau[Kb + 1][Ka + 1].piece === "")
+                                    plateau[Kb + 1][Ka + 1].colorIndex = "lightblue";
+                                else if (plateau[Kb + 1][Ka + 1].isWhite !== isWhiteTurn)
+                                    plateau[Kb + 1][Ka + 1].colorIndex = "lightcoral";
+                            } if (plateau[Kb + 1][Ka].piece === "")
+                                plateau[Kb + 1][Ka].colorIndex = "lightblue";
+                            else if (plateau[Kb + 1][Ka].isWhite !== isWhiteTurn)
+                                plateau[Kb + 1][Ka].colorIndex = "lightcoral";
+                        }
+                        if (Ka + 1 < 8) {
+                            if (plateau[Kb][Ka + 1].piece === "")
+                                plateau[Kb][Ka + 1].colorIndex = "lightblue";
+                            else if (plateau[Kb][Ka + 1].isWhite !== isWhiteTurn)
+                                plateau[Kb][Ka + 1].colorIndex = "lightcoral";
+                        } if (Ka - 1 >= 0) {
+                            if (plateau[Kb][Ka - 1].piece === "")
+                                plateau[Kb][Ka - 1].colorIndex = "lightblue";
+                            else if (plateau[Kb][Ka - 1].isWhite !== isWhiteTurn)
+                                plateau[Kb][Ka - 1].colorIndex = "lightcoral";
+                        }
+                    } else {
+                        rebuild();
+                        refresh();
                     }
-                    if (Kb + 1 < 8) {
-                        if (Ka - 1 >= 0)
-                            if (plateau[Kb + 1][Ka - 1].piece === "")
-                                plateau[Kb + 1][Ka - 1].colorIndex = "lightblue";
-                        if (Ka + 1 < 8)
-                            if (plateau[Kb + 1][Ka + 1].piece === "")
-                                plateau[Kb + 1][Ka + 1].colorIndex = "lightblue";
-                        if (plateau[Kb + 1][Ka].piece === "")
-                            plateau[Kb + 1][Ka].colorIndex = "lightblue";
-                    }
-                    if (Ka + 1 < 8)
-                        if (plateau[Kb][Ka + 1].piece === "")
-                            plateau[Kb][Ka + 1].colorIndex = "lightblue";
-                    if (Ka - 1 >= 0)
-                        if (plateau[Kb][Ka - 1].piece === "")
-                            plateau[Kb][Ka - 1].colorIndex = "lightblue";
                     break;
             }
         }
