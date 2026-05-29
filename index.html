@@ -12,16 +12,22 @@
     <br>
     <!-- <button>Petit rock</button>
     <button>Grand rock</button> -->
-    <div id="pion_bord" style="display: flex;">
+    <!-- <div id="pion_bord" style="display: flex;">
         <button id="selectTour">tour</button>
         <button id="selectCav">cavalier</button>
         <button id="selectFou">fou</button>
         <button id="selectReine">reine</button>
-    </div>
+    </div> -->
     <h1>White:</h1>
     <h1>Black:</h1>
     <p id="message">true</p>
-
+    <script src="./js/piece.js"></script>
+    <script src="./js/pion.js"></script>
+    <script src="./js/tour.js"></script>
+    <script src="./js/cavalier.js"></script>
+    <script src="./js/fou.js"></script>
+    <script src="./js/roi.js"></script>
+    <script src="./js/reine.js"></script>
     <script>
         const canvas = document.getElementById("display");
         canvas.addEventListener("click", onClick);
@@ -30,7 +36,7 @@
         const plateau = [];
         const CELL_SIZE = 50;
         let isWhiteTurn = true;
-        let selectedPion = null;
+        let selectedPion;
         let isWhite;
         let canA = true;
         let canB = true;
@@ -44,6 +50,7 @@
         init();
 
         function init() {
+            selectedPion = null;
             for (let y = 0; y < 8; y++) {
                 plateau[y] = [];
                 for (let x = 0; x < 8; x++) {
@@ -66,35 +73,35 @@
                             isWhite = true;
                         switch (x) {
                             case 0:
-                                plateau[y][x].piece = "t";
+                                plateau[y][x].piece = new tour(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                             case 1:
-                                plateau[y][x].piece = "c";
+                                plateau[y][x].piece = new cavalier(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                             case 2:
-                                plateau[y][x].piece = "f";
+                                plateau[y][x].piece = new fou(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                             case 3:
-                                plateau[y][x].piece = "Q";
+                                plateau[y][x].piece = new reine(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                             case 4:
-                                plateau[y][x].piece = "K";
+                                plateau[y][x].piece = new roi(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                             case 5:
-                                plateau[y][x].piece = "f";
+                                plateau[y][x].piece = new fou(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                             case 6:
-                                plateau[y][x].piece = "c";
+                                plateau[y][x].piece = new cavalier(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                             case 7:
-                                plateau[y][x].piece = "t";
+                                plateau[y][x].piece = new tour(isWhite, x, y);
                                 plateau[y][x].isWhite = isWhite;
                                 break;
                         }
@@ -105,7 +112,7 @@
                         } else if (y == 6) {
                             isWhite = true;
                         }
-                        plateau[y][x].piece = "p";
+                        plateau[y][x].piece = new pion(isWhite, x, y);
                         plateau[y][x].isWhite = isWhite;
                     }
                 }
@@ -124,7 +131,7 @@
                     else {
                         ctx.fillStyle = "black";
                     }
-                    ctx.fillText(plateau[y][x].piece == null ? "" : plateau[y][x].piece, x * CELL_SIZE + 25, y * CELL_SIZE + 25);
+                    ctx.fillText(plateau[y][x].piece.name == null ? "" : plateau[y][x].piece.name, x * CELL_SIZE + 25, y * CELL_SIZE + 25);
                     ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                 }
             }
@@ -146,22 +153,25 @@
         function onClick(e) {
             posX = Math.floor(e.clientX / 50);
             posY = Math.floor(e.clientY / 50);
-            if (selectedPion != null) {
-                switch (selectedPion.plateau.piece) {
+            console.log(selectedPion);
+            if (selectedPion !== null) {
+                switch (selectedPion.piece.name) {
                     case "p":
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[posY][posX].piece = "p";
+                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+                            plateau[posY][posX].piece = selectedPion.piece;
+                            selectedPion.piece.posX = posX;
+                            selectedPion.piece.posY = posY;
                             plateau[posY][posX].isWhite = isWhiteTurn;
-                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
                             if (posY == 0 || posY == 7) {
                                 document.getElementById('pion_bord').style.display = "flex";
                                 rebuild();
                                 refresh();
                             } else {
-                            isWhiteTurn = !isWhiteTurn;
-                            document.getElementById("message").innerHTML = isWhiteTurn;
-                            rebuild();
-                            refresh();
+                                isWhiteTurn = !isWhiteTurn;
+                                document.getElementById("message").innerHTML = isWhiteTurn;
+                                rebuild();
+                                refresh();
                             }
                         } else {
                             rebuild();
@@ -170,9 +180,11 @@
                         break;
                     case "t":
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[posY][posX].piece = "t";
+                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+                            selectedPion.piece.posX = posX;
+                            selectedPion.piece.posY = posY;
+                            plateau[posY][posX].piece = selectedPion.piece;
                             plateau[posY][posX].isWhite = isWhiteTurn;
-                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
                             rebuild();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
@@ -184,9 +196,11 @@
                         break;
                     case "c":
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[posY][posX].piece = "c";
+                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+                            selectedPion.piece.posX = posX;
+                            selectedPion.piece.posY = posY;
+                            plateau[posY][posX].piece = selectedPion.piece;
                             plateau[posY][posX].isWhite = isWhiteTurn;
-                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
                             rebuild();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
@@ -198,9 +212,11 @@
                         break;
                     case "f":
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[posY][posX].piece = "f";
+                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+                            selectedPion.piece.posX = posX;
+                            selectedPion.piece.posY = posY;
+                            plateau[posY][posX].piece = selectedPion.piece;
                             plateau[posY][posX].isWhite = isWhiteTurn;
-                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
                             rebuild();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
@@ -212,9 +228,11 @@
                         break;
                     case "Q":
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[posY][posX].piece = "Q";
+                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+                            selectedPion.piece.posX = posX;
+                            selectedPion.piece.posY = posY;
+                            plateau[posY][posX].piece = selectedPion.piece;
                             plateau[posY][posX].isWhite = isWhiteTurn;
-                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
                             rebuild();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
@@ -226,9 +244,11 @@
                         break;
                     case "K":
                         if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[posY][posX].piece = "K";
+                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+                            selectedPion.piece.posX = posX;
+                            selectedPion.piece.posY = posY;
+                            plateau[posY][posX].piece = selectedPion.piece;
                             plateau[posY][posX].isWhite = isWhiteTurn;
-                            plateau[selectedPion.posY][selectedPion.posX].piece = "";
                             rebuild();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
@@ -243,385 +263,36 @@
                 refresh();
             } else {
                 if (posX < plateau.length && posY < plateau.length) {
-                    selectedPion = { plateau: plateau[posY][posX], posX: posX, posY: posY };
-                    avadaKedavra(posX, posY);
+                    if (plateau[posY][posX].piece !== "") {
+                        selectedPion = { piece: plateau[posY][posX].piece };
+                        console.log(selectedPion);
+                        showRoutes(posX, posY);
+                    }
                 }
                 refresh();
             }
         }
 
-        function avadaKedavra(x, y) {
-            switch (selectedPion.plateau.piece) {
+        function showRoutes(x, y) {
+            console.log(selectedPion);
+            switch (selectedPion.piece.name) {
                 case "p":
-                    if (isWhiteTurn === true)
-                        if (plateau[y][x].isWhite === true) {
-                            if (plateau[y - 1][x].piece === "")
-                                plateau[y - 1][x].colorIndex = "lightblue";
-                            if (y == 6)
-                                if (plateau[y - 2][x].piece === "")
-                                    plateau[y - 2][x].colorIndex = "lightblue";
-                            if (x - 1 >= 0 && plateau[y - 1][x - 1].piece !== "" && plateau[y - 1][x - 1].isWhite !== plateau[y][x].isWhite)
-                                plateau[y - 1][x - 1].colorIndex = "lightcoral";
-                            if (x + 1 < 8 && plateau[y - 1][x + 1].piece !== "" && plateau[y - 1][x + 1].isWhite !== plateau[y][x].isWhite)
-                                plateau[y - 1][x + 1].colorIndex = "lightcoral";
-                        } else {
-                            selectedPion = null;
-                        }
-                    if (isWhiteTurn === false)
-                        if (plateau[y][x].isWhite === false) {
-                            if (plateau[y + 1][x].piece === "")
-                                plateau[y + 1][x].colorIndex = "lightblue";
-                            if (y == 1)
-                                if (plateau[y + 2][x].piece === "")
-                                    plateau[y + 2][x].colorIndex = "lightblue";
-                            if (x + 1 < 8 && plateau[y + 1][x + 1].piece !== "" && plateau[y + 1][x + 1].isWhite !== plateau[y][x].isWhite)
-                                plateau[y + 1][x + 1].colorIndex = "lightcoral";
-                            if (x - 1 >= 0 && plateau[y + 1][x - 1].piece !== "" && plateau[y + 1][x - 1].isWhite !== plateau[y][x].isWhite)
-                                plateau[y + 1][x - 1].colorIndex = "lightcoral";
-                        } else {
-                            selectedPion = null;
-                        }
+                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
                     break;
                 case "t":
-                    for (let i = y; i > 0; i--) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[i - 1][x].piece === "")
-                                plateau[i - 1][x].colorIndex = "lightblue";
-                            else if (plateau[i - 1][x].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[i - 1][x].colorIndex = "lightcoral";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
-                    for (let i = y + 1; i < 8; i++) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[i][x].piece === "")
-                                plateau[i][x].colorIndex = "lightblue";
-                            else if (plateau[i][x].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[i][x].colorIndex = "lightcoral";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
-                    for (let i = x; i > 0; i--) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[y][i - 1].piece === "")
-                                plateau[y][i - 1].colorIndex = "lightblue";
-                            else if (plateau[y][i - 1].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[y][i - 1].colorIndex = "lightcoral";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
-                    for (let i = x + 1; i < 8; i++) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[y][i].piece === "")
-                                plateau[y][i].colorIndex = "lightblue";
-                            else if (plateau[y][i].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[y][i].colorIndex = "lightcoral";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
+                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
                     break;
                 case "c":
-                    console.log(selectedPion.plateau.isWhite);
-                    if (selectedPion.plateau.isWhite === isWhiteTurn) {
-                        if (y - 2 >= 0) {
-                            if (x - 1 >= 0)
-                                if (plateau[y - 2][x - 1].piece === "" || plateau[y - 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y - 2][x - 1].colorIndex = "lightblue";
-                                    if (plateau[y - 2][x - 1].piece !== "" && plateau[y - 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y - 2][x - 1].colorIndex = "lightcoral";
-                                    }
-                                }
-                            if (x + 1 < 8)
-                                if (plateau[y - 2][x + 1].piece === "" || plateau[y - 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y - 2][x + 1].colorIndex = "lightblue";
-                                    if (plateau[y - 2][x + 1].piece !== "" && plateau[y - 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y - 2][x + 1].colorIndex = "lightcoral";
-                                    }
-                                }
-                        }
-                        if (y - 1 >= 0) {
-                            if (x - 2 >= 0)
-                                if (plateau[y - 1][x - 2].piece === "" || plateau[y - 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y - 1][x - 2].colorIndex = "lightblue";
-                                    if (plateau[y - 1][x - 2].piece !== "" && plateau[y - 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y - 1][x - 2].colorIndex = "lightcoral";
-                                    }
-                                }
-                            if (x + 2 < 8)
-                                if (plateau[y - 1][x + 2].piece === "" || plateau[y - 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y - 1][x + 2].colorIndex = "lightblue";
-                                    if (plateau[y - 1][x + 2].piece !== "" && plateau[y - 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y - 1][x + 2].colorIndex = "lightcoral";
-                                    }
-                                }
-                        }
-                        if (y + 1 < 8) {
-                            if (x + 2 < 8)
-                                if (plateau[y + 1][x + 2].piece === "" || plateau[y + 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y + 1][x + 2].colorIndex = "lightblue";
-                                    if (plateau[y + 1][x + 2].piece !== "" && plateau[y + 1][x + 2].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y + 1][x + 2].colorIndex = "lightcoral";
-                                    }
-                                }
-                            if (x - 2 >= 0)
-                                if (plateau[y + 1][x - 2].piece === "" || plateau[y + 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y + 1][x - 2].colorIndex = "lightblue";
-                                    if (plateau[y + 1][x - 2].piece !== "" && plateau[y + 1][x - 2].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y + 1][x - 2].colorIndex = "lightcoral";
-                                    }
-                                }
-                        }
-                        if (y + 2 < 8) {
-                            if (x - 1 >= 0)
-                                if (plateau[y + 2][x - 1].piece === "" || plateau[y + 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y + 2][x - 1].colorIndex = "lightblue";
-                                    if (plateau[y + 2][x - 1].piece !== "" && plateau[y + 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y + 2][x - 1].colorIndex = "lightcoral";
-                                    }
-                                }
-                            if (x + 1 < 8)
-                                if (plateau[y + 2][x + 1].piece === "" || plateau[y + 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
-                                    plateau[y + 2][x + 1].colorIndex = "lightblue";
-                                    if (plateau[y + 2][x + 1].piece !== "" && plateau[y + 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
-                                        plateau[y + 2][x + 1].colorIndex = "lightcoral";
-                                    }
-                                }
-                        }
-                    } else {
-                        rebuild();
-                        refresh();
-                    }
+                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
                     break;
                 case "f":
-                    console.log(selectedPion);
-                    let Fa = x;
-                    let Fb = y;
-                    canA = true;
-                    canB = true;
-                    canC = true;
-                    canD = true;
-                    if (selectedPion.plateau.isWhite === isWhiteTurn) {
-                        for (let i = 1; i < 8; i++) {
-                            if (Fb - i >= 0) {
-                                if (Fa - i >= 0)
-                                    if ((plateau[Fb - i][Fa - i].piece === "" || plateau[Fb - i][Fa - i].isWhite != isWhiteTurn) && canA === true) {
-                                        plateau[Fb - i][Fa - i].colorIndex = "lightblue";
-                                        if (plateau[Fb - i][Fa - i].piece !== "" && plateau[Fb - i][Fa - i].isWhite != isWhiteTurn) {
-                                            plateau[Fb - i][Fa - i].colorIndex = "lightcoral";
-                                            canA = false;
-                                        }
-                                    }
-                                    else canA = false;
-                                if (Fa + i < 8)
-                                    if ((plateau[Fb - i][Fa + i].piece === "" || plateau[Fb - i][Fa + i].isWhite != isWhiteTurn) && canB === true) {
-                                        plateau[Fb - i][Fa + i].colorIndex = "lightblue";
-                                        if (plateau[Fb - i][Fa + i].piece !== "" && plateau[Fb - i][Fa + i].isWhite != isWhiteTurn) {
-                                            plateau[Fb - i][Fa + i].colorIndex = "lightcoral";
-                                            canB = false;
-                                        }
-                                    }
-                                    else canB = false;
-                            }
-                            if (Fb + i < 8) {
-                                if (Fa - i >= 0)
-                                    if ((plateau[Fb + i][Fa - i].piece === "" || plateau[Fb + i][Fa - i].isWhite != isWhiteTurn) && canC === true) {
-                                        plateau[Fb + i][Fa - i].colorIndex = "lightblue";
-                                        if (plateau[Fb + i][Fa - i].piece !== "" && plateau[Fb + i][Fa - i].isWhite != isWhiteTurn) {
-                                            plateau[Fb + i][Fa - i].colorIndex = "lightcoral";
-                                            canC = false;
-                                        }
-                                    }
-                                    else canC = false;
-                                if (Fa + i < 8)
-                                    if ((plateau[Fb + i][Fa + i].piece === "" || plateau[Fb + i][Fa + i].isWhite != isWhiteTurn) && canD === true) {
-                                        plateau[Fb + i][Fa + i].colorIndex = "lightblue";
-                                        if (plateau[Fb + i][Fa + i].piece !== "" && plateau[Fb + i][Fa + i].isWhite != isWhiteTurn) {
-                                            plateau[Fb + i][Fa + i].colorIndex = "lightcoral";
-                                            canD = false
-                                        }
-                                    }
-                                    else canD = false;
-                            }
-                        }
-                    } else {
-                        rebuild();
-                        refresh();
-                    }
+                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
                     break;
                 case "Q":
-                    console.log(selectedPion);
-                    let Qa = x;
-                    let Qb = y;
-                    canA = true;
-                    canB = true;
-                    canC = true;
-                    canD = true;
-                    for (let i = Qb; i > 0; i--) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[i - 1][Qa].piece === "")
-                                plateau[i - 1][Qa].colorIndex = "lightblue";
-                            else if (plateau[i - 1][Qa].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[i - 1][Qa].colorIndex = "lightblue";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
-                    for (let i = Qb + 1; i < 8; i++) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[i][Qa].piece === "")
-                                plateau[i][Qa].colorIndex = "lightblue";
-                            else if (plateau[i][Qa].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[i][Qa].colorIndex = "lightblue";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
-                    for (let i = Qa; i > 0; i--) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[Qb][i - 1].piece === "")
-                                plateau[Qb][i - 1].colorIndex = "lightblue";
-                            else if (plateau[Qb][i - 1].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[Qb][i - 1].colorIndex = "lightblue";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
-                    for (let i = Qa + 1; i < 8; i++) {
-                        if (selectedPion.plateau.isWhite == isWhiteTurn)
-                            if (plateau[Qb][i].piece === "")
-                                plateau[Qb][i].colorIndex = "lightblue";
-                            else if (plateau[Qb][i].isWhite !== selectedPion.plateau.isWhite) {
-                                plateau[Qb][i].colorIndex = "lightblue";
-                                break;
-                            }
-                            else {
-                                break;
-                            }
-                    }
-                    canA = true;
-                    canB = true;
-                    canC = true;
-                    canD = true;
-                    if (selectedPion.plateau.isWhite === isWhiteTurn) {
-                        for (let i = 1; i < 8; i++) {
-                            if (Qb - i >= 0) {
-                                if (Qa - i >= 0)
-                                    if ((plateau[Qb - i][Qa - i].piece === "" || plateau[Qb - i][Qa - i].isWhite != isWhiteTurn) && canA === true) {
-                                        plateau[Qb - i][Qa - i].colorIndex = "lightblue";
-                                        if (plateau[Qb - i][Qa - i].piece !== "" && plateau[Qb - i][Qa - i].isWhite != isWhiteTurn) {
-                                            plateau[Qb - i][Qa - i].colorIndex = "lightcoral";
-                                            canA = false;
-                                        }
-                                    }
-                                    else canA = false;
-                                if (Qa + i < 8)
-                                    if ((plateau[Qb - i][Qa + i].piece === "" || plateau[Qb - i][Qa + i].isWhite != isWhiteTurn) && canB === true) {
-                                        plateau[Qb - i][Qa + i].colorIndex = "lightblue";
-                                        if (plateau[Qb - i][Qa + i].piece !== "" && plateau[Qb - i][Qa + i].isWhite != isWhiteTurn) {
-                                            plateau[Qb - i][Qa + i].colorIndex = "lightcoral";
-                                            canB = false;
-                                        }
-                                    }
-                                    else canB = false;
-                            }
-                            if (Qb + i < 8) {
-                                if (Qa - i >= 0)
-                                    if ((plateau[Qb + i][Qa - i].piece === "" || plateau[Qb + i][Qa - i].isWhite != isWhiteTurn) && canC === true) {
-                                        plateau[Qb + i][Qa - i].colorIndex = "lightblue";
-                                        if (plateau[Qb + i][Qa - i].piece !== "" && plateau[Qb + i][Qa - i].isWhite != isWhiteTurn) {
-                                            plateau[Qb + i][Qa - i].colorIndex = "lightcoral";
-                                            canC = false;
-                                        }
-                                    }
-                                    else canC = false;
-                                if (Qa + i < 8)
-                                    if ((plateau[Qb + i][Qa + i].piece === "" || plateau[Qb + i][Qa + i].isWhite != isWhiteTurn) && canD === true) {
-                                        plateau[Qb + i][Qa + i].colorIndex = "lightblue";
-                                        if (plateau[Qb + i][Qa + i].piece !== "" && plateau[Qb + i][Qa + i].isWhite != isWhiteTurn) {
-                                            plateau[Qb + i][Qa + i].colorIndex = "lightcoral";
-                                            canD = false
-                                        }
-                                    }
-                                    else canD = false;
-                            }
-                        }
-                    } else {
-                        rebuild();
-                        refresh();
-                    }
+                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
                     break;
                 case "K":
-                    console.log(selectedPion);
-                    let Ka = x;
-                    let Kb = y;
-                    if (plateau[Kb][Ka].isWhite === isWhiteTurn) {
-                        if (Kb - 1 >= 0) {
-                            if (Ka - 1 >= 0) {
-                                if (plateau[Kb - 1][Ka - 1].piece === "")
-                                    plateau[Kb - 1][Ka - 1].colorIndex = "lightblue";
-                                else if (plateau[Kb - 1][Ka - 1].isWhite !== isWhiteTurn)
-                                    plateau[Kb - 1][Ka - 1].colorIndex = "lightcoral";
-                            }
-                            if (Ka + 1 < 8) {
-                                if (plateau[Kb - 1][Ka + 1].piece === "")
-                                    plateau[Kb - 1][Ka + 1].colorIndex = "lightblue";
-                                else if (plateau[Kb - 1][Ka + 1].isWhite !== isWhiteTurn)
-                                    plateau[Kb - 1][Ka + 1].colorIndex = "lightcoral";
-                            }
-                            if (plateau[Kb - 1][Ka].piece === "")
-                                plateau[Kb - 1][Ka].colorIndex = "lightblue";
-                            else if (plateau[Kb - 1][Ka].isWhite !== isWhiteTurn)
-                                plateau[Kb - 1][Ka].colorIndex = "lightcoral";
-                        }
-                        if (Kb + 1 < 8) {
-                            if (Ka - 1 >= 0) {
-                                if (plateau[Kb + 1][Ka - 1].piece === "")
-                                    plateau[Kb + 1][Ka - 1].colorIndex = "lightblue";
-                                else if (plateau[Kb + 1][Ka - 1].isWhite !== isWhiteTurn)
-                                    plateau[Kb + 1][Ka - 1].colorIndex = "lightcoral";
-                            } if (Ka + 1 < 8) {
-                                if (plateau[Kb + 1][Ka + 1].piece === "")
-                                    plateau[Kb + 1][Ka + 1].colorIndex = "lightblue";
-                                else if (plateau[Kb + 1][Ka + 1].isWhite !== isWhiteTurn)
-                                    plateau[Kb + 1][Ka + 1].colorIndex = "lightcoral";
-                            } if (plateau[Kb + 1][Ka].piece === "")
-                                plateau[Kb + 1][Ka].colorIndex = "lightblue";
-                            else if (plateau[Kb + 1][Ka].isWhite !== isWhiteTurn)
-                                plateau[Kb + 1][Ka].colorIndex = "lightcoral";
-                        }
-                        if (Ka + 1 < 8) {
-                            if (plateau[Kb][Ka + 1].piece === "")
-                                plateau[Kb][Ka + 1].colorIndex = "lightblue";
-                            else if (plateau[Kb][Ka + 1].isWhite !== isWhiteTurn)
-                                plateau[Kb][Ka + 1].colorIndex = "lightcoral";
-                        } if (Ka - 1 >= 0) {
-                            if (plateau[Kb][Ka - 1].piece === "")
-                                plateau[Kb][Ka - 1].colorIndex = "lightblue";
-                            else if (plateau[Kb][Ka - 1].isWhite !== isWhiteTurn)
-                                plateau[Kb][Ka - 1].colorIndex = "lightcoral";
-                        }
-                    } else {
-                        rebuild();
-                        refresh();
-                    }
+                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
                     break;
             }
         }
