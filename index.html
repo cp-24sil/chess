@@ -9,10 +9,19 @@
 
 <body>
     <canvas id="display" width="400" height="400"></canvas>
-
+    <br>
+    <!-- <button>Petit rock</button>
+    <button>Grand rock</button> -->
+    <div id="pion_bord" style="display: flex;">
+        <button id="selectTour">tour</button>
+        <button id="selectCav">cavalier</button>
+        <button id="selectFou">fou</button>
+        <button id="selectReine">reine</button>
+    </div>
     <h1>White:</h1>
     <h1>Black:</h1>
     <p id="message">true</p>
+
     <script>
         const canvas = document.getElementById("display");
         canvas.addEventListener("click", onClick);
@@ -27,6 +36,8 @@
         let canB = true;
         let canC = true;
         let canD = true;
+        let posX;
+        let posY;
 
         document.getElementById("message").innerHTML = isWhiteTurn;
 
@@ -133,8 +144,8 @@
         }
 
         function onClick(e) {
-            const posX = Math.floor(e.clientX / 50);
-            const posY = Math.floor(e.clientY / 50);
+            posX = Math.floor(e.clientX / 50);
+            posY = Math.floor(e.clientY / 50);
             if (selectedPion != null) {
                 switch (selectedPion.plateau.piece) {
                     case "p":
@@ -142,10 +153,16 @@
                             plateau[posY][posX].piece = "p";
                             plateau[posY][posX].isWhite = isWhiteTurn;
                             plateau[selectedPion.posY][selectedPion.posX].piece = "";
-                            rebuild();
+                            if (posY == 0 || posY == 7) {
+                                document.getElementById('pion_bord').style.display = "flex";
+                                rebuild();
+                                refresh();
+                            } else {
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
+                            rebuild();
                             refresh();
+                            }
                         } else {
                             rebuild();
                             refresh();
@@ -241,7 +258,7 @@
                             if (plateau[y - 1][x].piece === "")
                                 plateau[y - 1][x].colorIndex = "lightblue";
                             if (y == 6)
-                                if (plateau[y - 1][x].piece === "")
+                                if (plateau[y - 2][x].piece === "")
                                     plateau[y - 2][x].colorIndex = "lightblue";
                             if (x - 1 >= 0 && plateau[y - 1][x - 1].piece !== "" && plateau[y - 1][x - 1].isWhite !== plateau[y][x].isWhite)
                                 plateau[y - 1][x - 1].colorIndex = "lightcoral";
@@ -255,7 +272,7 @@
                             if (plateau[y + 1][x].piece === "")
                                 plateau[y + 1][x].colorIndex = "lightblue";
                             if (y == 1)
-                                if (plateau[y + 1][x].piece === "")
+                                if (plateau[y + 2][x].piece === "")
                                     plateau[y + 2][x].colorIndex = "lightblue";
                             if (x + 1 < 8 && plateau[y + 1][x + 1].piece !== "" && plateau[y + 1][x + 1].isWhite !== plateau[y][x].isWhite)
                                 plateau[y + 1][x + 1].colorIndex = "lightcoral";
