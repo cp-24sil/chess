@@ -11,10 +11,18 @@ class pion extends piece {
       if (y == 6)
         if (plateau[y - 2][x].piece === "")
           plateau[y - 2][x].colorIndex = "lightblue";
-      if (x - 1 >= 0 && plateau[y - 1][x - 1].piece !== "" && plateau[y - 1][x - 1].isWhite !== plateau[y][x].isWhite)
+      if (x - 1 >= 0 && plateau[y - 1][x - 1].piece !== "" && plateau[y - 1][x - 1].isWhite !== plateau[y][x].isWhite) {
         plateau[y - 1][x - 1].colorIndex = "lightcoral";
-      if (x + 1 < 8 && plateau[y - 1][x + 1].piece !== "" && plateau[y - 1][x + 1].isWhite !== plateau[y][x].isWhite)
+        if (plateau[y - 1][x - 1].piece.name == "K" && plateau[y - 1][x - 1].piece.isWhite != plateau[y][x].isWhite) {
+          isKinChess = true;
+        }
+      }
+      if (x + 1 < 8 && plateau[y - 1][x + 1].piece !== "" && plateau[y - 1][x + 1].isWhite !== plateau[y][x].isWhite) {
         plateau[y - 1][x + 1].colorIndex = "lightcoral";
+        if (plateau[y - 1][x + 1].piece.name == "K" && plateau[y - 1][x + 1].piece.isWhite != plateau[y][x].isWhite) {
+          isKinChess = true;
+        }
+      }
     }
     else if (this.isWhite === false && isWhiteTurn === false) {
       if (plateau[y + 1][x].piece === "")
@@ -22,12 +30,21 @@ class pion extends piece {
       if (y == 1)
         if (plateau[y + 2][x].piece === "")
           plateau[y + 2][x].colorIndex = "lightblue";
-      if (x + 1 < 8 && plateau[y + 1][x + 1].piece !== "" && plateau[y + 1][x + 1].isWhite !== plateau[y][x].isWhite)
+      if (x + 1 < 8 && plateau[y + 1][x + 1].piece !== "" && plateau[y + 1][x + 1].isWhite !== plateau[y][x].isWhite) {
         plateau[y + 1][x + 1].colorIndex = "lightcoral";
-      if (x - 1 >= 0 && plateau[y + 1][x - 1].piece !== "" && plateau[y + 1][x - 1].isWhite !== plateau[y][x].isWhite)
+        if (plateau[y + 1][x + 1].piece.name == "K" && plateau[y + 1][x + 1].piece.isWhite != plateau[y][x].isWhite) {
+          isKinChess = true;
+        }
+      }
+      if (x - 1 >= 0 && plateau[y + 1][x - 1].piece !== "" && plateau[y + 1][x - 1].isWhite !== plateau[y][x].isWhite) {
         plateau[y + 1][x - 1].colorIndex = "lightcoral";
+        if (plateau[y + 1][x - 1].piece.name == "K" && plateau[y + 1][x + 1].piece.isWhite != plateau[y][x].isWhite) {
+          isKinChess = true;
+        }
+      }
     } else {
       selectedPion = null;
     }
+    return isKinChess;
   }
 }

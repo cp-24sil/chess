@@ -44,6 +44,7 @@
         let canD = true;
         let posX;
         let posY;
+        let isKinChess = false;
 
         document.getElementById("message").innerHTML = isWhiteTurn;
 
@@ -106,18 +107,36 @@
                                 break;
                         }
                     }
-                    else if (y == 1 || y == 6) {
-                        if (y == 1) {
-                            isWhite = false;
-                        } else if (y == 6) {
-                            isWhite = true;
-                        }
-                        plateau[y][x].piece = new pion(isWhite, x, y);
-                        plateau[y][x].isWhite = isWhite;
-                    }
+                    // else if (y == 1 || y == 6) {
+                    //     if (y == 1) {
+                    //         isWhite = false;
+                    //     } else if (y == 6) {
+                    //         isWhite = true;
+                    //     }
+                    //     plateau[y][x].piece = new pion(isWhite, x, y);
+                    //     plateau[y][x].isWhite = isWhite;
+                    // }
                 }
             }
             refresh();
+        }
+
+        function isInChess() {
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
+                    if (plateau[y][x].piece != "") {
+                        console.log(plateau[y][x].piece);
+                        selectedPion = plateau[y][x];
+                        selectedPion.piece.showRoutes(x, y, selectedPion.piece.isWhite);
+                        if (isKinChess) {
+                            document.getElementById('message').innerHTML = "CHESS!";
+                        }
+                    }
+                }
+            }
+            rebuild();
+            refresh();
+            selectedPion = null;
         }
 
         function refresh() {
@@ -153,7 +172,6 @@
         function onClick(e) {
             posX = Math.floor(e.clientX / 50);
             posY = Math.floor(e.clientY / 50);
-            console.log(selectedPion);
             if (selectedPion !== null) {
                 switch (selectedPion.piece.name) {
                     case "p":
@@ -173,6 +191,7 @@
                                 rebuild();
                                 refresh();
                             }
+                            isInChess();
                         } else {
                             rebuild();
                             refresh();
@@ -186,6 +205,7 @@
                             plateau[posY][posX].piece = selectedPion.piece;
                             plateau[posY][posX].isWhite = isWhiteTurn;
                             rebuild();
+                            isInChess();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
                             refresh();
@@ -205,6 +225,7 @@
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
                             refresh();
+                            isInChess();
                         } else {
                             rebuild();
                             refresh();
@@ -218,6 +239,7 @@
                             plateau[posY][posX].piece = selectedPion.piece;
                             plateau[posY][posX].isWhite = isWhiteTurn;
                             rebuild();
+                            isInChess();
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
                             refresh();
@@ -237,6 +259,7 @@
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
                             refresh();
+                            isInChess();
                         } else {
                             rebuild();
                             refresh();
@@ -253,6 +276,7 @@
                             isWhiteTurn = !isWhiteTurn;
                             document.getElementById("message").innerHTML = isWhiteTurn;
                             refresh();
+                            isInChess();
                         } else {
                             rebuild();
                             refresh();
@@ -265,7 +289,6 @@
                 if (posX < plateau.length && posY < plateau.length) {
                     if (plateau[posY][posX].piece !== "") {
                         selectedPion = { piece: plateau[posY][posX].piece };
-                        console.log(selectedPion);
                         showRoutes(posX, posY);
                     }
                 }
@@ -274,7 +297,6 @@
         }
 
         function showRoutes(x, y) {
-            console.log(selectedPion);
             switch (selectedPion.piece.name) {
                 case "p":
                     selectedPion.piece.showRoutes(x, y, isWhiteTurn);

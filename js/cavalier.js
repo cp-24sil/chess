@@ -10,6 +10,9 @@ class cavalier extends piece {
             plateau[y - 2][x - 1].colorIndex = "lightblue";
             if (plateau[y - 2][x - 1].piece !== "" && plateau[y - 2][x - 1].isWhite !== selectedPion.piece.isWhite) {
               plateau[y - 2][x - 1].colorIndex = "lightcoral";
+              if (plateau[y - 2][x - 1].piece !== "" && plateau[y - 2][x - 1].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
         if (x + 1 < 8)
@@ -17,6 +20,9 @@ class cavalier extends piece {
             plateau[y - 2][x + 1].colorIndex = "lightblue";
             if (plateau[y - 2][x + 1].piece !== "" && plateau[y - 2][x + 1].isWhite !== selectedPion.piece.isWhite) {
               plateau[y - 2][x + 1].colorIndex = "lightcoral";
+              if (plateau[y - 2][x + 1].piece !== "" && plateau[y - 2][x + 1].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
       }
@@ -26,6 +32,9 @@ class cavalier extends piece {
             plateau[y - 1][x - 2].colorIndex = "lightblue";
             if (plateau[y - 1][x - 2].piece !== "" && plateau[y - 1][x - 2].isWhite !== selectedPion.piece.isWhite) {
               plateau[y - 1][x - 2].colorIndex = "lightcoral";
+              if (plateau[y - 1][x - 2].piece !== "" && plateau[y - 1][x - 2].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
         if (x + 2 < 8)
@@ -33,6 +42,9 @@ class cavalier extends piece {
             plateau[y - 1][x + 2].colorIndex = "lightblue";
             if (plateau[y - 1][x + 2].piece !== "" && plateau[y - 1][x + 2].isWhite !== selectedPion.piece.isWhite) {
               plateau[y - 1][x + 2].colorIndex = "lightcoral";
+              if (plateau[y - 1][x + 2].piece !== "" && plateau[y - 1][x + 2].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
       }
@@ -42,6 +54,9 @@ class cavalier extends piece {
             plateau[y + 1][x + 2].colorIndex = "lightblue";
             if (plateau[y + 1][x + 2].piece !== "" && plateau[y + 1][x + 2].isWhite !== selectedPion.piece.isWhite) {
               plateau[y + 1][x + 2].colorIndex = "lightcoral";
+              if (plateau[y + 1][x + 2].piece !== "" && plateau[y + 1][x + 2].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
         if (x - 2 >= 0)
@@ -49,22 +64,31 @@ class cavalier extends piece {
             plateau[y + 1][x - 2].colorIndex = "lightblue";
             if (plateau[y + 1][x - 2].piece !== "" && plateau[y + 1][x - 2].isWhite !== selectedPion.piece.isWhite) {
               plateau[y + 1][x - 2].colorIndex = "lightcoral";
+              if (plateau[y + 1][x - 2].piece !== "" && plateau[y + 1][x - 2].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
       }
       if (y + 2 < 8) {
         if (x - 1 >= 0)
-          if (plateau[y + 2][x - 1].piece === "" || plateau[y + 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
+          if (plateau[y + 2][x - 1].piece === "" || plateau[y + 2][x - 1].isWhite !== selectedPion.piece.isWhite) {
             plateau[y + 2][x - 1].colorIndex = "lightblue";
-            if (plateau[y + 2][x - 1].piece !== "" && plateau[y + 2][x - 1].isWhite !== selectedPion.plateau.isWhite) {
+            if (plateau[y + 2][x - 1].piece !== "" && plateau[y + 2][x - 1].isWhite !== selectedPion.piece.isWhite) {
               plateau[y + 2][x - 1].colorIndex = "lightcoral";
+              if (plateau[y + 2][x - 1].piece !== "" && plateau[y + 2][x - 1].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
         if (x + 1 < 8)
-          if (plateau[y + 2][x + 1].piece === "" || plateau[y + 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
+          if (plateau[y + 2][x + 1].piece === "" || plateau[y + 2][x + 1].isWhite !== selectedPion.piece.isWhite) {
             plateau[y + 2][x + 1].colorIndex = "lightblue";
-            if (plateau[y + 2][x + 1].piece !== "" && plateau[y + 2][x + 1].isWhite !== selectedPion.plateau.isWhite) {
+            if (plateau[y + 2][x + 1].piece !== "" && plateau[y + 2][x + 1].isWhite !== selectedPion.piece.isWhite) {
               plateau[y + 2][x + 1].colorIndex = "lightcoral";
+              if (plateau[y + 2][x + 1].piece !== "" && plateau[y + 2][x + 1].isWhite !== selectedPion.piece.isWhite) {
+                isKinChess = true;
+              }
             }
           }
       }
