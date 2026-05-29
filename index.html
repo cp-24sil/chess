@@ -12,12 +12,12 @@
     <br>
     <!-- <button>Petit rock</button>
     <button>Grand rock</button> -->
-    <!-- <div id="pion_bord" style="display: flex;">
-        <button id="selectTour">tour</button>
+    <div id="pion_bord" style="display: flex;">
+        <!-- <button id="selectTour">tour</button>
         <button id="selectCav">cavalier</button>
         <button id="selectFou">fou</button>
-        <button id="selectReine">reine</button>
-    </div> -->
+        <button id="selectReine">reine</button> -->
+    </div>
     <h1>White:</h1>
     <h1>Black:</h1>
     <p id="message">true</p>
@@ -107,15 +107,15 @@
                                 break;
                         }
                     }
-                    // else if (y == 1 || y == 6) {
-                    //     if (y == 1) {
-                    //         isWhite = false;
-                    //     } else if (y == 6) {
-                    //         isWhite = true;
-                    //     }
-                    //     plateau[y][x].piece = new pion(isWhite, x, y);
-                    //     plateau[y][x].isWhite = isWhite;
-                    // }
+                    else if (y == 1 || y == 6) {
+                        if (y == 1) {
+                            isWhite = false;
+                        } else if (y == 6) {
+                            isWhite = true;
+                        }
+                        plateau[y][x].piece = new pion(isWhite, x, y);
+                        plateau[y][x].isWhite = isWhite;
+                    }
                 }
             }
             refresh();
@@ -134,9 +134,11 @@
                     }
                 }
             }
+            document.getElementById('message').innerHTML = "not chess";
             rebuild();
             refresh();
             selectedPion = null;
+            isKinChess = false;
         }
 
         function refresh() {

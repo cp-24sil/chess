@@ -6,8 +6,9 @@ class pion extends piece {
 
   showRoutes(x, y, isWhiteTurn) {
     if (this.isWhite === true && isWhiteTurn === true) {
-      if (plateau[y - 1][x].piece === "")
-        plateau[y - 1][x].colorIndex = "lightblue";
+      if (y - 1 >= 0)
+        if (plateau[y - 1][x].piece === "")
+          plateau[y - 1][x].colorIndex = "lightblue";
       if (y == 6)
         if (plateau[y - 2][x].piece === "")
           plateau[y - 2][x].colorIndex = "lightblue";
@@ -25,8 +26,9 @@ class pion extends piece {
       }
     }
     else if (this.isWhite === false && isWhiteTurn === false) {
-      if (plateau[y + 1][x].piece === "")
-        plateau[y + 1][x].colorIndex = "lightblue";
+      if (y + 1 < 8)
+        if (plateau[y + 1][x].piece === "")
+          plateau[y + 1][x].colorIndex = "lightblue";
       if (y == 1)
         if (plateau[y + 2][x].piece === "")
           plateau[y + 2][x].colorIndex = "lightblue";
