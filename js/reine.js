@@ -14,7 +14,7 @@ class reine extends piece{
         if (plateau[i - 1][Qa].piece === "")
           plateau[i - 1][Qa].colorIndex = "lightblue";
         else if (plateau[i - 1][Qa].isWhite !== selectedPion.piece.isWhite) {
-          plateau[i - 1][Qa].colorIndex = "lightblue";
+          plateau[i - 1][Qa].colorIndex = "lightcoral";
           break;
         }
         else {
@@ -26,7 +26,7 @@ class reine extends piece{
         if (plateau[i][Qa].piece === "")
           plateau[i][Qa].colorIndex = "lightblue";
         else if (plateau[i][Qa].isWhite !== selectedPion.piece.isWhite) {
-          plateau[i][Qa].colorIndex = "lightblue";
+          plateau[i][Qa].colorIndex = "lightcoral";
           break;
         }
         else {
@@ -38,7 +38,7 @@ class reine extends piece{
         if (plateau[Qb][i - 1].piece === "")
           plateau[Qb][i - 1].colorIndex = "lightblue";
         else if (plateau[Qb][i - 1].isWhite !== selectedPion.piece.isWhite) {
-          plateau[Qb][i - 1].colorIndex = "lightblue";
+          plateau[Qb][i - 1].colorIndex = "lightcoral";
           break;
         }
         else {
@@ -50,7 +50,7 @@ class reine extends piece{
         if (plateau[Qb][i].piece === "")
           plateau[Qb][i].colorIndex = "lightblue";
         else if (plateau[Qb][i].isWhite !== selectedPion.piece.isWhite) {
-          plateau[Qb][i].colorIndex = "lightblue";
+          plateau[Qb][i].colorIndex = "lightcoral";
           break;
         }
         else {

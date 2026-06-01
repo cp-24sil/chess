@@ -18,9 +18,6 @@ class fou extends piece {
               if (plateau[Fb - i][Fa - i].piece !== "" && plateau[Fb - i][Fa - i].isWhite != isWhiteTurn) {
                 plateau[Fb - i][Fa - i].colorIndex = "lightcoral";
                 canA = false;
-                if (plateau[Fb - i][Fa - i].piece === "K" && plateau[Fb - i][Fa - i].isWhite != isWhiteTurn) {
-                  isKinChess = true;
-                }
               }
             }
             else canA = false;
@@ -30,9 +27,6 @@ class fou extends piece {
               if (plateau[Fb - i][Fa + i].piece !== "" && plateau[Fb - i][Fa + i].isWhite != isWhiteTurn) {
                 plateau[Fb - i][Fa + i].colorIndex = "lightcoral";
                 canB = false;
-                if (plateau[Fb - i][Fa + i].piece !== "" && plateau[Fb - i][Fa + i].isWhite != isWhiteTurn) {
-                  isKinChess = true;
-                }
               }
             }
             else canB = false;
@@ -44,9 +38,6 @@ class fou extends piece {
               if (plateau[Fb + i][Fa - i].piece !== "" && plateau[Fb + i][Fa - i].isWhite != isWhiteTurn) {
                 plateau[Fb + i][Fa - i].colorIndex = "lightcoral";
                 canC = false;
-                if(plateau[Fb + i][Fa - i].piece !== "" && plateau[Fb + i][Fa - i].isWhite != isWhiteTurn){
-                  isKinChess = true;
-                }
               }
             }
             else canC = false;
@@ -56,9 +47,6 @@ class fou extends piece {
               if (plateau[Fb + i][Fa + i].piece !== "" && plateau[Fb + i][Fa + i].isWhite != isWhiteTurn) {
                 plateau[Fb + i][Fa + i].colorIndex = "lightcoral";
                 canD = false;
-                if(plateau[Fb + i][Fa + i].piece !== "" && plateau[Fb + i][Fa + i].isWhite != isWhiteTurn){
-                  isKinChess = true;
-                }
               }
             }
             else canD = false;

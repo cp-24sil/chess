@@ -44,9 +44,7 @@
         let canD = true;
         let posX;
         let posY;
-        let isKinChess = false;
-
-        document.getElementById("message").innerHTML = isWhiteTurn;
+        let KingIsInChess = false;
 
         init();
 
@@ -121,26 +119,6 @@
             refresh();
         }
 
-        function isInChess() {
-            for (let y = 0; y < 8; y++) {
-                for (let x = 0; x < 8; x++) {
-                    if (plateau[y][x].piece != "") {
-                        console.log(plateau[y][x].piece);
-                        selectedPion = plateau[y][x];
-                        selectedPion.piece.showRoutes(x, y, selectedPion.piece.isWhite);
-                        if (isKinChess) {
-                            document.getElementById('message').innerHTML = "CHESS!";
-                        }
-                    }
-                }
-            }
-            document.getElementById('message').innerHTML = "not chess";
-            rebuild();
-            refresh();
-            selectedPion = null;
-            isKinChess = false;
-        }
-
         function refresh() {
             for (let y = 0; y < 8; y++) {
                 for (let x = 0; x < 8; x++) {
@@ -175,118 +153,25 @@
             posX = Math.floor(e.clientX / 50);
             posY = Math.floor(e.clientY / 50);
             if (selectedPion !== null) {
-                switch (selectedPion.piece.name) {
-                    case "p":
-                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
-                            plateau[posY][posX].piece = selectedPion.piece;
-                            selectedPion.piece.posX = posX;
-                            selectedPion.piece.posY = posY;
-                            plateau[posY][posX].isWhite = isWhiteTurn;
-                            if (posY == 0 || posY == 7) {
-                                document.getElementById('pion_bord').style.display = "flex";
-                                rebuild();
-                                refresh();
-                            } else {
-                                isWhiteTurn = !isWhiteTurn;
-                                document.getElementById("message").innerHTML = isWhiteTurn;
-                                rebuild();
-                                refresh();
+                selectedPion.piece.move();
+                for (let y = 0; y < 8; y++) {
+                    for (let x = 0; x < 8; x++) {
+                        if (KingIsInChess == false)
+                            if (plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite === isWhiteTurn) {
+                                selectedPion = { piece: plateau[y][x].piece };
+                                document.getElementById("message").innerHTML = selectedPion.piece.isInChess(isWhiteTurn, x, y);
+                                break;
                             }
-                            isInChess();
-                        } else {
-                            rebuild();
-                            refresh();
-                        }
-                        break;
-                    case "t":
-                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
-                            selectedPion.piece.posX = posX;
-                            selectedPion.piece.posY = posY;
-                            plateau[posY][posX].piece = selectedPion.piece;
-                            plateau[posY][posX].isWhite = isWhiteTurn;
-                            rebuild();
-                            isInChess();
-                            isWhiteTurn = !isWhiteTurn;
-                            document.getElementById("message").innerHTML = isWhiteTurn;
-                            refresh();
-                        } else {
-                            rebuild();
-                            refresh();
-                        }
-                        break;
-                    case "c":
-                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
-                            selectedPion.piece.posX = posX;
-                            selectedPion.piece.posY = posY;
-                            plateau[posY][posX].piece = selectedPion.piece;
-                            plateau[posY][posX].isWhite = isWhiteTurn;
-                            rebuild();
-                            isWhiteTurn = !isWhiteTurn;
-                            document.getElementById("message").innerHTML = isWhiteTurn;
-                            refresh();
-                            isInChess();
-                        } else {
-                            rebuild();
-                            refresh();
-                        }
-                        break;
-                    case "f":
-                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
-                            selectedPion.piece.posX = posX;
-                            selectedPion.piece.posY = posY;
-                            plateau[posY][posX].piece = selectedPion.piece;
-                            plateau[posY][posX].isWhite = isWhiteTurn;
-                            rebuild();
-                            isInChess();
-                            isWhiteTurn = !isWhiteTurn;
-                            document.getElementById("message").innerHTML = isWhiteTurn;
-                            refresh();
-                        } else {
-                            rebuild();
-                            refresh();
-                        }
-                        break;
-                    case "Q":
-                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
-                            selectedPion.piece.posX = posX;
-                            selectedPion.piece.posY = posY;
-                            plateau[posY][posX].piece = selectedPion.piece;
-                            plateau[posY][posX].isWhite = isWhiteTurn;
-                            rebuild();
-                            isWhiteTurn = !isWhiteTurn;
-                            document.getElementById("message").innerHTML = isWhiteTurn;
-                            refresh();
-                            isInChess();
-                        } else {
-                            rebuild();
-                            refresh();
-                        }
-                        break;
-                    case "K":
-                        if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-                            plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
-                            selectedPion.piece.posX = posX;
-                            selectedPion.piece.posY = posY;
-                            plateau[posY][posX].piece = selectedPion.piece;
-                            plateau[posY][posX].isWhite = isWhiteTurn;
-                            rebuild();
-                            isWhiteTurn = !isWhiteTurn;
-                            document.getElementById("message").innerHTML = isWhiteTurn;
-                            refresh();
-                            isInChess();
-                        } else {
-                            rebuild();
-                            refresh();
-                        }
-                        break;
+                            else
+                                if (plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite !== isWhiteTurn) {
+                                    selectedPion = { piece: plateau[y][x].piece };
+                                    document.getElementById("message").innerHTML = selectedPion.piece.isInChess(isWhiteTurn, x, y);
+                                    break;
+                                }
+                    }
+                    selectedPion = null;
+                    refresh();
                 }
-                selectedPion = null;
-                refresh();
             } else {
                 if (posX < plateau.length && posY < plateau.length) {
                     if (plateau[posY][posX].piece !== "") {
@@ -320,6 +205,7 @@
                     break;
             }
         }
+
     </script>
 </body>
 
