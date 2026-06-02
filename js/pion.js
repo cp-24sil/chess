@@ -1,7 +1,7 @@
 class pion extends piece {
 
-  constructor(isWhite, posX, posY) {
-    super(name = "p", isWhite, posX, posY);
+  constructor(isWhite, posX, posY, img) {
+    super("p", isWhite, posX, posY, img);
   }
 
   move() {
@@ -12,12 +12,10 @@ class pion extends piece {
       selectedPion.piece.posY = posY;
       plateau[posY][posX].isWhite = isWhiteTurn;
       if (posY == 0 || posY == 7) {
-        document.getElementById('pion_bord').style.display = "flex";
         rebuild();
         refresh();
       } else {
         isWhiteTurn = !isWhiteTurn;
-        document.getElementById("message").innerHTML = isWhiteTurn;
         rebuild();
         refresh();
       }

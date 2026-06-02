@@ -1,6 +1,6 @@
 class fou extends piece {
-  constructor(isWhite, posX, posY) {
-    super(name = "f", isWhite, posX, posY);
+  constructor(isWhite, posX, posY, img) {
+    super("f", isWhite, posX, posY, img);
   }
   showRoutes(x, y, isWhiteTurn) {
     let Fa = x;

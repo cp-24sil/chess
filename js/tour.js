@@ -1,6 +1,6 @@
 class tour extends piece {
-  constructor(isWhite, posX, posY) {
-    super(name = "t", isWhite, posX, posY);
+  constructor(isWhite, posX, posY, img) {
+    super("t", isWhite, posX, posY, img);
   }
 
   showRoutes(x, y, isWhiteTurn) {

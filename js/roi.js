@@ -1,6 +1,7 @@
 class roi extends piece {
-  constructor(isWhite, posX, posY) {
-    super(name = "K", isWhite, posX, posY);
+  constructor(isWhite, posX, posY, img) {
+    super("K", isWhite, posX, posY, img);
+    this.kingAsMove = false;
   }
   showRoutes(x, y, isWhiteTurn) {
     let Ka = x;
@@ -76,9 +77,16 @@ class roi extends piece {
           nbPathValid++;
         }
       }
-      console.log(nbPathValid);
-      if (nbPathValid == 0 && KingIsInChess != false) {
-        
+      console.log("Chemins disponibles pour le roi :", nbPathValid);
+
+      if (KingIsInChess) {
+        console.log(nbPathValid);
+        if (nbPathValid === 0) {
+          document.getElementById("message").innerHTML = "ÉCHEC ET MAT !";
+        } else {
+          document.getElementById("message").innerHTML = "ÉCHEC AU ROI !";
+          this.kingAsMove = true;
+        }
       }
     } else {
       rebuild();
@@ -86,136 +94,112 @@ class roi extends piece {
     }
   }
 
+  move() {
+    if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
+      plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+      selectedPion.piece.posX = posX;
+      selectedPion.piece.posY = posY;
+      plateau[posY][posX].piece = selectedPion.piece;
+      plateau[posY][posX].isWhite = isWhiteTurn;
+      this.kingAsMove = true;
+      rebuild();
+      isWhiteTurn = !isWhiteTurn;
+      document.getElementById("message").innerHTML = isWhiteTurn ? "Au tour des Blancs" : "Au tour des Noirs";
+      refresh();
+    } else {
+      rebuild();
+      refresh();
+    }
+  }
+
   isInChess(isWhiteTurn, x, y) {
-    let Ka = x;
-    let Kb = y;
-    let canA = true;
-    let canB = true;
-    let canC = true;
-    let canD = true;
-    let nbIsChess = 0;
-    let initialIsKingInChess = KingIsInChess;
-    for (let i = Kb; i > 0; i--) {
-      if (plateau[i - 1][Ka].piece === "")
-        plateau[i - 1][Ka].colorIndex = "lightblue";
-      else if (plateau[i - 1][Ka].isWhite !== selectedPion.piece.isWhite) {
-        plateau[i - 1][Ka].colorIndex = "lightcoral";
-        if (plateau[Kb - i][Ka].piece.name === "t" || plateau[Kb - i][Ka].piece.name === "Q") {
-          KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
+    let kingAttacked = false;
+
+    for (let i = y - 1; i >= 0; i--) {
+      if (plateau[i][x].piece !== "") {
+        if (plateau[i][x].piece.isWhite !== isWhiteTurn) {
+          if (plateau[i][x].piece.name === "t" || plateau[i][x].piece.name === "Q") kingAttacked = true;
         }
         break;
       }
-      else {
-        break;
-      }
     }
-    for (let i = Kb + 1; i < 8; i++) {
-      if (plateau[i][Ka].piece === "")
-        plateau[i][Ka].colorIndex = "lightblue";
-      else if (plateau[i][Ka].isWhite !== selectedPion.piece.isWhite) {
-        plateau[i][Ka].colorIndex = "lightcoral";
-        if (plateau[i][Ka].piece.name === "t" || plateau[i][Ka].piece.name === "Q") {
-          KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
+    for (let i = y + 1; i < 8; i++) {
+      if (plateau[i][x].piece !== "") {
+        if (plateau[i][x].piece.isWhite !== isWhiteTurn) {
+          if (plateau[i][x].piece.name === "t" || plateau[i][x].piece.name === "Q") kingAttacked = true;
         }
         break;
       }
-      else {
-        break;
-      }
     }
-    for (let i = Ka; i > 0; i--) {
-      if (plateau[Kb][i - 1].piece === "")
-        plateau[Kb][i - 1].colorIndex = "lightblue";
-      else if (plateau[Kb][i - 1].isWhite !== selectedPion.piece.isWhite) {
-        plateau[Kb][i - 1].colorIndex = "lightcoral";
-        if (plateau[Kb][i - 1].piece.name === "t" || plateau[Kb][i - 1].piece.name === "Q") {
-          KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
+    for (let i = x - 1; i >= 0; i--) {
+      if (plateau[y][i].piece !== "") {
+        if (plateau[y][i].piece.isWhite !== isWhiteTurn) {
+          if (plateau[y][i].piece.name === "t" || plateau[y][i].piece.name === "Q") kingAttacked = true;
         }
         break;
       }
-      else {
-        break;
-      }
     }
-    for (let i = Ka + 1; i < 8; i++) {
-      if (plateau[Kb][i].piece === "")
-        plateau[Kb][i].colorIndex = "lightblue";
-      else if (plateau[Kb][i].isWhite !== selectedPion.piece.isWhite) {
-        plateau[Kb][i].colorIndex = "lightcoral";
-        if (plateau[Kb][i].piece.name === "t" || plateau[Kb][i].piece.name === "Q") {
-          KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
+    for (let i = x + 1; i < 8; i++) {
+      if (plateau[y][i].piece !== "") {
+        if (plateau[y][i].piece.isWhite !== isWhiteTurn) {
+          if (plateau[y][i].piece.name === "t" || plateau[y][i].piece.name === "Q") kingAttacked = true;
         }
         break;
       }
-      else {
-        break;
+    }
+    const diags = [
+      { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
+      { dx: -1, dy: 1 }, { dx: 1, dy: 1 }
+    ];
+    for (let d of diags) {
+      let nx = x + d.dx;
+      let ny = y + d.dy;
+      while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+        if (plateau[ny][nx].piece !== "") {
+          if (plateau[ny][nx].piece.isWhite !== isWhiteTurn) {
+            if (plateau[ny][nx].piece.name === "f" || plateau[ny][nx].piece.name === "Q") kingAttacked = true;
+          }
+          break;
+        }
+        nx += d.dx;
+        ny += d.dy;
       }
     }
-    canA = true;
-    canB = true;
-    canC = true;
-    canD = true;
-    for (let i = 1; i < 8; i++) {
-      if (Kb - i >= 0) {
-        if (Ka - i >= 0)
-          if ((plateau[Kb - i][Ka - i].piece === "" || plateau[Kb - i][Ka - i].isWhite != selectedPion.piece.isWhite) && canA === true) {
-            plateau[Kb - i][Ka - i].colorIndex = "lightblue";
-            if (plateau[Kb - i][Ka - i].piece !== "" && plateau[Kb - i][Ka - i].isWhite != selectedPion.piece.isWhite) {
-              plateau[Kb - i][Ka - i].colorIndex = "lightcoral";
-              if (plateau[Kb - i][Ka - i].piece.name === "f" || plateau[Kb - i][Ka - i].piece.name === "Q") {
-                KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
-              }
-              canA = false;
-            }
-          }
-          else canA = false;
-        if (Ka + i < 8)
-          if ((plateau[Kb - i][Ka + i].piece === "" || plateau[Kb - i][Ka + i].isWhite != selectedPion.piece.isWhite) && canB === true) {
-            plateau[Kb - i][Ka + i].colorIndex = "lightblue";
-            if (plateau[Kb - i][Ka + i].piece !== "" && plateau[Kb - i][Ka + i].isWhite != selectedPion.piece.isWhite) {
-              plateau[Kb - i][Ka + i].colorIndex = "lightcoral";
-              if (plateau[Kb - i][Ka + i].piece.name === "f" || plateau[Kb - i][Ka + i].piece.name === "Q") {
-                KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
-              }
-              canB = false;
-            }
-          }
-          else canB = false;
+    let pawnRow = isWhiteTurn ? y - 1 : y + 1;
+    if (pawnRow >= 0 && pawnRow < 8) {
+      if (x - 1 >= 0 && plateau[pawnRow][x - 1].piece !== "") {
+        if (plateau[pawnRow][x - 1].piece.isWhite !== isWhiteTurn && plateau[pawnRow][x - 1].piece.name === "p") kingAttacked = true;
       }
-      if (Kb + i < 8) {
-        if (Ka - i >= 0)
-          if ((plateau[Kb + i][Ka - i].piece === "" || plateau[Kb + i][Ka - i].isWhite != selectedPion.piece.isWhite) && canC === true) {
-            plateau[Kb + i][Ka - i].colorIndex = "lightblue";
-            if (plateau[Kb + i][Ka - i].piece !== "" && plateau[Kb + i][Ka - i].isWhite != selectedPion.piece.isWhite) {
-              plateau[Kb + i][Ka - i].colorIndex = "lightcoral";
-              if (plateau[Kb + i][Ka - i].piece.name === "f" || plateau[Kb + i][Ka - i].piece.name === "Q") {
-                KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
-              }
-              canC = false;
-            }
-          }
-          else canC = false;
-        if (Ka + i < 8)
-          if ((plateau[Kb + i][Ka + i].piece === "" || plateau[Kb + i][Ka + i].isWhite != selectedPion.piece.isWhite) && canD === true) {
-            plateau[Kb + i][Ka + i].colorIndex = "lightblue";
-            if (plateau[Kb + i][Ka + i].piece !== "" && plateau[Kb + i][Ka + i].isWhite != selectedPion.piece.isWhite) {
-              plateau[Kb + i][Ka + i].colorIndex = "lightcoral";
-              if (plateau[Kb + i][Ka + i].piece.name === "f" || plateau[Kb + i][Ka + i].piece.name === "Q") {
-                KingIsInChess = { inChess: true, piece: selectedPion.piece, nb: nbIsChess++ };
-              }
-              canD = false
-            }
-          }
-          else canD = false;
+      if (x + 1 < 8 && plateau[pawnRow][x + 1].piece !== "") {
+        if (plateau[pawnRow][x + 1].piece.isWhite !== isWhiteTurn && plateau[pawnRow][x + 1].piece.name === "p") kingAttacked = true;
       }
     }
-    rebuild();
-    if (KingIsInChess != false)
-      return KingIsInChess.inChess;
-    else if (KingIsInChess.nbIsChess == initialIsKingInChess.nbIsChess) {
-      KingIsInChess = false;
-      return KingIsInChess;
+
+    if (y - 2 >= 0) {
+      if (x - 1 >= 0)
+        if (plateau[y - 2][x - 1].piece !== "" && plateau[y - 2][x - 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+      if (x + 1 < 8)
+        if (plateau[y - 2][x + 1].piece !== "" && plateau[y - 2][x + 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
     }
-    else return KingIsInChess;
+    if (y - 1 >= 0) {
+      if (x - 2 >= 0)
+        if (plateau[y - 1][x - 2].piece !== "" && plateau[y - 1][x - 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+      if (x + 2 < 8)
+        if (plateau[y - 1][x + 2].piece !== "" && plateau[y - 1][x + 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+    }
+    if (y + 1 < 8) {
+      if (x + 2 < 8)
+        if (plateau[y + 1][x + 2].piece !== "" && plateau[y + 1][x + 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+      if (x - 2 >= 0)
+        if (plateau[y + 1][x - 2].piece !== "" && plateau[y + 1][x - 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+    }
+    if (y + 2 < 8) {
+      if (x - 1 >= 0)
+        if (plateau[y + 2][x - 1].piece !== "" && plateau[y + 2][x - 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+      if (x + 1 < 8)
+        if (plateau[y + 2][x + 1].piece !== "" && plateau[y + 2][x + 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+    }
+    KingIsInChess = kingAttacked;
+    return kingAttacked;
   }
 }

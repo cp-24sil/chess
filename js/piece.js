@@ -1,9 +1,10 @@
 class piece {
-  constructor(name, isWhite, posX, posY) {
+  constructor(name, isWhite, posX, posY, img) {
     this.name = name;
     this.posX = posX;
     this.posY = posY;
     this.isWhite = isWhite;
+    this.img = img;
   }
 
   move() {
@@ -15,7 +16,7 @@ class piece {
       plateau[posY][posX].isWhite = isWhiteTurn;
       rebuild();
       isWhiteTurn = !isWhiteTurn;
-      document.getElementById("message").innerHTML = isWhiteTurn;
+      document.getElementById("message").innerHTML = isWhiteTurn ? "Au tour des Blancs" : "Au tour des Noirs";
       refresh();
     } else {
       rebuild();

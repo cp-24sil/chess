@@ -1,6 +1,6 @@
 class reine extends piece{
-  constructor(isWhite, posX, posY) {
-    super(name = "Q", isWhite, posX, posY);
+  constructor(isWhite, posX, posY, img) {
+    super("Q", isWhite, posX, posY, img);
   }
   showRoutes(x, y, isWhiteTurn) {
     let Qa = x;

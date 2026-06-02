@@ -12,7 +12,7 @@
     <br>
     <h1>White:</h1>
     <h1>Black:</h1>
-    <p id="message">true</p>
+    <p id="message"></p>
     <script src="./js/piece.js"></script>
     <script src="./js/pion.js"></script>
     <script src="./js/tour.js"></script>
@@ -37,93 +37,85 @@
         let posX;
         let posY;
         let KingIsInChess = false;
+        const img = new Image();
 
         init();
 
         function init() {
             selectedPion = null;
+            KingIsInChess = false;
+
             for (let y = 0; y < 8; y++) {
                 plateau[y] = [];
                 for (let x = 0; x < 8; x++) {
-                    if ((x + y) % 2 !== 0) {
-                        plateau[y][x] = {
-                            colorIndex: "black",
-                            piece: "",
-                        }
-                    }
-                    else {
-                        plateau[y][x] = {
-                            colorIndex: "white",
-                            piece: "",
-                        }
-                    }
+                    plateau[y][x] = {
+                        colorIndex: (x + y) % 2 !== 0 ? "#DEB887" : "white",
+                        piece: "",
+                        isWhite: null
+                    };
+
                     if (y == 0 || y == 7) {
-                        if (y == 0)
-                            isWhite = false;
-                        if (y == 7)
-                            isWhite = true;
+                        let isWhite = (y == 7);
+                        let bOrW = isWhite ? 'w' : 'b';
+
+                        let pieceImg = new Image();
+                        pieceImg.onload = refresh;
+
                         switch (x) {
-                            case 0:
-                                plateau[y][x].piece = new tour(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
+                            case 0: case 7:
+                                pieceImg.src = `./assets/img/rook-${bOrW}.svg`;
+                                plateau[y][x].piece = new tour(isWhite, x, y, pieceImg);
                                 break;
-                            case 1:
-                                plateau[y][x].piece = new cavalier(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
+                            case 1: case 6:
+                                pieceImg.src = `./assets/img/knight-${bOrW}.svg`;
+                                plateau[y][x].piece = new cavalier(isWhite, x, y, pieceImg);
                                 break;
-                            case 2:
-                                plateau[y][x].piece = new fou(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
+                            case 2: case 5:
+                                pieceImg.src = `./assets/img/bishop-${bOrW}.svg`;
+                                plateau[y][x].piece = new fou(isWhite, x, y, pieceImg);
                                 break;
                             case 3:
-                                plateau[y][x].piece = new reine(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
+                                pieceImg.src = `./assets/img/queen-${bOrW}.svg`;
+                                plateau[y][x].piece = new reine(isWhite, x, y, pieceImg);
                                 break;
                             case 4:
-                                plateau[y][x].piece = new roi(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
-                                break;
-                            case 5:
-                                plateau[y][x].piece = new fou(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
-                                break;
-                            case 6:
-                                plateau[y][x].piece = new cavalier(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
-                                break;
-                            case 7:
-                                plateau[y][x].piece = new tour(isWhite, x, y);
-                                plateau[y][x].isWhite = isWhite;
+                                pieceImg.src = `./assets/img/king-${bOrW}.svg`;
+                                plateau[y][x].piece = new roi(isWhite, x, y, pieceImg);
                                 break;
                         }
-                    }
-                    else if (y == 1 || y == 6) {
-                        if (y == 1) {
-                            isWhite = false;
-                        } else if (y == 6) {
-                            isWhite = true;
-                        }
-                        plateau[y][x].piece = new pion(isWhite, x, y);
                         plateau[y][x].isWhite = isWhite;
                     }
+                    else if (y == 1 || y == 6) {
+                        let isWhite = (y == 6);
+                        let bOrW = isWhite ? 'w' : 'b';
+                        let pieceImg = new Image();
+                        pieceImg.onload = refresh;
+                        pieceImg.src = `./assets/img/pawn-${bOrW}.svg`;
+
+                        plateau[y][x].piece = new pion(isWhite, x, y, pieceImg);
+                        plateau[y][x].isWhite = isWhite;
+                    }
+
                 }
             }
+            console.log(plateau);
             refresh();
         }
 
         function refresh() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (let y = 0; y < 8; y++) {
                 for (let x = 0; x < 8; x++) {
                     ctx.fillStyle = plateau[y][x].colorIndex;
                     ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                    if ((x + y) % 2 !== 0) {
-                        ctx.fillStyle = "white";
-                    }
-                    else {
-                        ctx.fillStyle = "black";
-                    }
-                    ctx.fillText(plateau[y][x].piece.name == null ? "" : plateau[y][x].piece.name, x * CELL_SIZE + 25, y * CELL_SIZE + 25);
                     ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+
+                    if (plateau[y][x].piece !== "") {
+                        let p = plateau[y][x].piece;
+                        if (p.img && p.img.complete) {
+                            ctx.drawImage(p.img, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                        }
+                    }
                 }
             }
         }
@@ -135,40 +127,41 @@
                         plateau[y][x].colorIndex = "white";
                     }
                     else {
-                        plateau[y][x].colorIndex = "black";
+                        plateau[y][x].colorIndex = "#DEB887";
                     }
                 }
             }
         }
-
         function onClick(e) {
             posX = Math.floor(e.clientX / 50);
             posY = Math.floor(e.clientY / 50);
             if (selectedPion !== null) {
                 selectedPion.piece.move();
-                for (let y = 0; y < 8; y++) {
-                    for (let x = 0; x < 8; x++) {
-                        if (KingIsInChess == false)
+                if (isCheckmate(isWhiteTurn)) {
+                    document.getElementById("message").innerHTML = "ÉCHEC ET MAT ! Fin de la partie.";
+                } else {
+                    let kingFound = false;
+                    for (let y = 0; y < 8; y++) {
+                        for (let x = 0; x < 8; x++) {
                             if (plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite === isWhiteTurn) {
-                                selectedPion = { piece: plateau[y][x].piece };
-                                document.getElementById("message").innerHTML = selectedPion.piece.isInChess(isWhiteTurn, x, y);
-                                break;
-                            }
-                            else
-                                if (plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite !== isWhiteTurn) {
-                                    selectedPion = { piece: plateau[y][x].piece };
-                                    document.getElementById("message").innerHTML = selectedPion.piece.isInChess(isWhiteTurn, x, y);
-                                    break;
+                                if (plateau[y][x].piece.isInChess(isWhiteTurn, x, y)) {
+                                    document.getElementById("message").innerHTML = "Échec au Roi !";
                                 }
+                                kingFound = true; break;
+                            }
+                        }
+                        if (kingFound) break;
                     }
-                    selectedPion = null;
-                    refresh();
                 }
+                selectedPion = null;
+                refresh();
             } else {
-                if (posX < plateau.length && posY < plateau.length) {
+                if (posX < 8 && posY < 8) {
                     if (plateau[posY][posX].piece !== "") {
-                        selectedPion = { piece: plateau[posY][posX].piece };
-                        showRoutes(posX, posY);
+                        if (plateau[posY][posX].piece.isWhite === isWhiteTurn) {
+                            selectedPion = { piece: plateau[posY][posX].piece };
+                            showRoutes(posX, posY);
+                        }
                     }
                 }
                 refresh();
@@ -177,6 +170,71 @@
 
         function showRoutes(x, y) {
             selectedPion.piece.showRoutes(x, y, isWhiteTurn);
+        }
+
+        function getValidDestinations(x, y) {
+            plateau[y][x].piece.showRoutes(x, y, isWhiteTurn);
+            let destinations = [];
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    if (plateau[row][col].colorIndex === "lightblue" || plateau[row][col].colorIndex === "lightcoral") {
+                        destinations.push({ x: col, y: row });
+                    }
+                }
+            }
+            rebuild();
+            return destinations;
+        }
+
+        function isCheckmate(isWhiteTurn) {
+            let kingX, kingY;
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
+                    if (plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite === isWhiteTurn) {
+                        kingX = x;
+                        kingY = y;
+                        break;
+                    }
+                }
+            }
+            if (!plateau[kingY][kingX].piece.isInChess(isWhiteTurn, kingX, kingY)) {
+                return false;
+            }
+
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
+                    let currentPiece = plateau[y][x].piece;
+                    if (currentPiece !== "" && currentPiece.isWhite === isWhiteTurn) {
+                        let destinations = getValidDestinations(x, y);
+                        for (let dest of destinations) {
+                            let originalSourcePiece = plateau[y][x].piece;
+                            let originalDestPiece = plateau[dest.y][dest.x].piece;
+                            let originalDestIsWhite = plateau[dest.y][dest.x].isWhite;
+                            plateau[dest.y][dest.x].piece = currentPiece;
+                            plateau[dest.y][dest.x].isWhite = isWhiteTurn;
+                            currentPiece.posX = dest.x;
+                            currentPiece.posY = dest.y;
+                            plateau[y][x].piece = "";
+                            plateau[y][x].isWhite = null;
+                            let testKingX = (currentPiece.name === "K") ? dest.x : kingX;
+                            let testKingY = (currentPiece.name === "K") ? dest.y : kingY;
+                            let roiEstToujoursEnEchec = plateau[testKingY][testKingX].piece.isInChess(isWhiteTurn, testKingX, testKingY);
+                            plateau[y][x].piece = originalSourcePiece;
+                            plateau[y][x].isWhite = isWhiteTurn;
+                            currentPiece.posX = x;
+                            currentPiece.posY = y;
+                            plateau[dest.y][dest.x].piece = originalDestPiece;
+                            plateau[dest.y][dest.x].isWhite = originalDestIsWhite;
+                            if (!roiEstToujoursEnEchec) {
+                                rebuild();
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+            rebuild();
+            return true;
         }
 
     </script>

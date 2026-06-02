@@ -1,6 +1,6 @@
 class cavalier extends piece {
-  constructor(isWhite, posX, posY) {
-    super(name = "c", isWhite, posX, posY);
+  constructor(isWhite, posX, posY, img) {
+    super("c", isWhite, posX, posY, img);
   }
   showRoutes(x, y, isWhiteTurn) {
     if (selectedPion.piece.isWhite === isWhiteTurn) {
