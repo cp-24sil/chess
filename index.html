@@ -10,14 +10,6 @@
 <body>
     <canvas id="display" width="400" height="400"></canvas>
     <br>
-    <!-- <button>Petit rock</button>
-    <button>Grand rock</button> -->
-    <div id="pion_bord" style="display: flex;">
-        <!-- <button id="selectTour">tour</button>
-        <button id="selectCav">cavalier</button>
-        <button id="selectFou">fou</button>
-        <button id="selectReine">reine</button> -->
-    </div>
     <h1>White:</h1>
     <h1>Black:</h1>
     <p id="message">true</p>
@@ -184,26 +176,7 @@
         }
 
         function showRoutes(x, y) {
-            switch (selectedPion.piece.name) {
-                case "p":
-                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
-                    break;
-                case "t":
-                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
-                    break;
-                case "c":
-                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
-                    break;
-                case "f":
-                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
-                    break;
-                case "Q":
-                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
-                    break;
-                case "K":
-                    selectedPion.piece.showRoutes(x, y, isWhiteTurn);
-                    break;
-            }
+            selectedPion.piece.showRoutes(x, y, isWhiteTurn);
         }
 
     </script>

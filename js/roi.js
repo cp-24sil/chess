@@ -5,51 +5,80 @@ class roi extends piece {
   showRoutes(x, y, isWhiteTurn) {
     let Ka = x;
     let Kb = y;
+    let nbPathValid = 0;
     if (plateau[Kb][Ka].isWhite === isWhiteTurn) {
       if (Kb - 1 >= 0) {
         if (Ka - 1 >= 0) {
-          if (plateau[Kb - 1][Ka - 1].piece === "")
+          if (plateau[Kb - 1][Ka - 1].piece === "") {
             plateau[Kb - 1][Ka - 1].colorIndex = "lightblue";
-          else if (plateau[Kb - 1][Ka - 1].isWhite !== isWhiteTurn)
+            nbPathValid++;
+          } else if (plateau[Kb - 1][Ka - 1].isWhite !== isWhiteTurn) {
             plateau[Kb - 1][Ka - 1].colorIndex = "lightcoral";
+            nbPathValid++;
+          }
         }
         if (Ka + 1 < 8) {
-          if (plateau[Kb - 1][Ka + 1].piece === "")
+          if (plateau[Kb - 1][Ka + 1].piece === "") {
             plateau[Kb - 1][Ka + 1].colorIndex = "lightblue";
-          else if (plateau[Kb - 1][Ka + 1].isWhite !== isWhiteTurn)
+            nbPathValid++;
+          } else if (plateau[Kb - 1][Ka + 1].isWhite !== isWhiteTurn) {
             plateau[Kb - 1][Ka + 1].colorIndex = "lightcoral";
+            nbPathValid++;
+          }
         }
-        if (plateau[Kb - 1][Ka].piece === "")
+        if (plateau[Kb - 1][Ka].piece === "") {
           plateau[Kb - 1][Ka].colorIndex = "lightblue";
-        else if (plateau[Kb - 1][Ka].isWhite !== isWhiteTurn)
+          nbPathValid++;
+        } else if (plateau[Kb - 1][Ka].isWhite !== isWhiteTurn) {
           plateau[Kb - 1][Ka].colorIndex = "lightcoral";
+          nbPathValid++;
+        }
       }
       if (Kb + 1 < 8) {
         if (Ka - 1 >= 0) {
-          if (plateau[Kb + 1][Ka - 1].piece === "")
+          if (plateau[Kb + 1][Ka - 1].piece === "") {
             plateau[Kb + 1][Ka - 1].colorIndex = "lightblue";
-          else if (plateau[Kb + 1][Ka - 1].isWhite !== isWhiteTurn)
+            nbPathValid++;
+          } else if (plateau[Kb + 1][Ka - 1].isWhite !== isWhiteTurn) {
             plateau[Kb + 1][Ka - 1].colorIndex = "lightcoral";
+            nbPathValid++;
+          }
         } if (Ka + 1 < 8) {
-          if (plateau[Kb + 1][Ka + 1].piece === "")
+          if (plateau[Kb + 1][Ka + 1].piece === "") {
             plateau[Kb + 1][Ka + 1].colorIndex = "lightblue";
-          else if (plateau[Kb + 1][Ka + 1].isWhite !== isWhiteTurn)
+            nbPathValid++;
+          } else if (plateau[Kb + 1][Ka + 1].isWhite !== isWhiteTurn) {
             plateau[Kb + 1][Ka + 1].colorIndex = "lightcoral";
-        } if (plateau[Kb + 1][Ka].piece === "")
+            nbPathValid++;
+          }
+        } if (plateau[Kb + 1][Ka].piece === "") {
           plateau[Kb + 1][Ka].colorIndex = "lightblue";
-        else if (plateau[Kb + 1][Ka].isWhite !== isWhiteTurn)
+          nbPathValid++;
+        } else if (plateau[Kb + 1][Ka].isWhite !== isWhiteTurn) {
           plateau[Kb + 1][Ka].colorIndex = "lightcoral";
+          nbPathValid++;
+        }
       }
       if (Ka + 1 < 8) {
-        if (plateau[Kb][Ka + 1].piece === "")
+        if (plateau[Kb][Ka + 1].piece === "") {
           plateau[Kb][Ka + 1].colorIndex = "lightblue";
-        else if (plateau[Kb][Ka + 1].isWhite !== isWhiteTurn)
+          nbPathValid++;
+        } else if (plateau[Kb][Ka + 1].isWhite !== isWhiteTurn) {
           plateau[Kb][Ka + 1].colorIndex = "lightcoral";
+          nbPathValid++;
+        }
       } if (Ka - 1 >= 0) {
-        if (plateau[Kb][Ka - 1].piece === "")
+        if (plateau[Kb][Ka - 1].piece === "") {
           plateau[Kb][Ka - 1].colorIndex = "lightblue";
-        else if (plateau[Kb][Ka - 1].isWhite !== isWhiteTurn)
+          nbPathValid++;
+        } else if (plateau[Kb][Ka - 1].isWhite !== isWhiteTurn) {
           plateau[Kb][Ka - 1].colorIndex = "lightcoral";
+          nbPathValid++;
+        }
+      }
+      console.log(nbPathValid);
+      if (nbPathValid == 0 && KingIsInChess != false) {
+        
       }
     } else {
       rebuild();
