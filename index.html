@@ -153,8 +153,13 @@
             gameOver = false;
             document.getElementById("message").innerHTML = "";
             document.getElementById("turn").innerHTML = "Au tour des Blancs";
+            ctxPieceWhite.clearRect(0, 0, canvasPieceWhite.width, canvasPieceWhite.height);
+            ctxPieceBlack.clearRect(0, 0, canvasPieceBlack.width, canvasPieceBlack.height);
             for (let y = 0; y < 8; y++) {
                 plateau[y] = [];
+                if (y < 2)
+                    pieceEat.length = 0;
+
                 for (let x = 0; x < 8; x++) {
                     plateau[y][x] = {
                         colorIndex: (x + y) % 2 !== 0 ? "#DEB887" : "white",
