@@ -28,33 +28,33 @@ class tour extends piece {
     if (this.isWhite !== isWhiteTurn) return;
     for (let i = y - 1; i >= 0; i--) {
       if (plateau[i][x].piece === "") {
-        this.tryMarkCell(x, y, x, i, isWhiteTurn);
+        this.colorCell(x, y, x, i, isWhiteTurn);
       } else {
-        if (plateau[i][x].isWhite !== isWhiteTurn) this.tryMarkCell(x, y, x, i, isWhiteTurn);
+        if (plateau[i][x].isWhite !== isWhiteTurn) this.colorCell(x, y, x, i, isWhiteTurn);
         break;
       }
     }
     for (let i = y + 1; i < 8; i++) {
       if (plateau[i][x].piece === "") {
-        this.tryMarkCell(x, y, x, i, isWhiteTurn);
+        this.colorCell(x, y, x, i, isWhiteTurn);
       } else {
-        if (plateau[i][x].isWhite !== isWhiteTurn) this.tryMarkCell(x, y, x, i, isWhiteTurn);
+        if (plateau[i][x].isWhite !== isWhiteTurn) this.colorCell(x, y, x, i, isWhiteTurn);
         break;
       }
     }
     for (let i = x - 1; i >= 0; i--) {
       if (plateau[y][i].piece === "") {
-        this.tryMarkCell(x, y, i, y, isWhiteTurn);
+        this.colorCell(x, y, i, y, isWhiteTurn);
       } else {
-        if (plateau[y][i].isWhite !== isWhiteTurn) this.tryMarkCell(x, y, i, y, isWhiteTurn);
+        if (plateau[y][i].isWhite !== isWhiteTurn) this.colorCell(x, y, i, y, isWhiteTurn);
         break;
       }
     }
     for (let i = x + 1; i < 8; i++) {
       if (plateau[y][i].piece === "") {
-        this.tryMarkCell(x, y, i, y, isWhiteTurn);
+        this.colorCell(x, y, i, y, isWhiteTurn);
       } else {
-        if (plateau[y][i].isWhite !== isWhiteTurn) this.tryMarkCell(x, y, i, y, isWhiteTurn);
+        if (plateau[y][i].isWhite !== isWhiteTurn) this.colorCell(x, y, i, y, isWhiteTurn);
         break;
       }
     }
