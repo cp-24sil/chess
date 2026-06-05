@@ -9,10 +9,13 @@
 
 <body>
     <canvas id="display" width="400" height="400"></canvas>
-    <br>
-    <h1>White:</h1>
-    <h1>Black:</h1>
+    <h2>Jeu d'Échecs</h2>
+    <p id="turn">Au tour des Blancs</p>
     <p id="message"></p>
+    <canvas id="display" width="400" height="400"></canvas>
+    <br>
+    <button onclick="init()">Nouvelle partie</button>
+
     <script src="./js/piece.js"></script>
     <script src="./js/pion.js"></script>
     <script src="./js/tour.js"></script>
@@ -25,25 +28,28 @@
         canvas.addEventListener("click", onClick);
         /** @type {CanvasRenderingContext2D} */
         const ctx = canvas.getContext("2d");
-        const plateau = [];
-        const CELL_SIZE = 50;
-        let isWhiteTurn = true;
-        let selectedPion;
-        let isWhite;
-        let canA = true;
-        let canB = true;
-        let canC = true;
-        let canD = true;
-        let posX;
-        let posY;
-        let KingIsInChess = false;
-        const img = new Image();
 
-        init();
+        const CELL_SIZE = 50;
+        const plateau = [];
+
+        let isWhiteTurn = true;
+        let selectedPion = null;
+        let enPassantTarget = null;
+        let gameOver = false;
+
+        const queenImgs = { w: null, b: null };
+
+        function getQueenImg(isWhite) {
+            return isWhite ? queenImgs.w : queenImgs.b;
+        }
 
         function init() {
             selectedPion = null;
-            KingIsInChess = false;
+            enPassantTarget = null;
+            isWhiteTurn = true;
+            gameOver = false;
+            document.getElementById("message").innerHTML = "";
+            document.getElementById("turn").innerHTML = "Au tour des Blancs";
 
             for (let y = 0; y < 8; y++) {
                 plateau[y] = [];
@@ -53,53 +59,59 @@
                         piece: "",
                         isWhite: null
                     };
-
-                    if (y == 0 || y == 7) {
-                        let isWhite = (y == 7);
-                        let bOrW = isWhite ? 'w' : 'b';
-
-                        let pieceImg = new Image();
-                        pieceImg.onload = refresh;
-
-                        switch (x) {
-                            case 0: case 7:
-                                pieceImg.src = `./assets/img/rook-${bOrW}.svg`;
-                                plateau[y][x].piece = new tour(isWhite, x, y, pieceImg);
-                                break;
-                            case 1: case 6:
-                                pieceImg.src = `./assets/img/knight-${bOrW}.svg`;
-                                plateau[y][x].piece = new cavalier(isWhite, x, y, pieceImg);
-                                break;
-                            case 2: case 5:
-                                pieceImg.src = `./assets/img/bishop-${bOrW}.svg`;
-                                plateau[y][x].piece = new fou(isWhite, x, y, pieceImg);
-                                break;
-                            case 3:
-                                pieceImg.src = `./assets/img/queen-${bOrW}.svg`;
-                                plateau[y][x].piece = new reine(isWhite, x, y, pieceImg);
-                                break;
-                            case 4:
-                                pieceImg.src = `./assets/img/king-${bOrW}.svg`;
-                                plateau[y][x].piece = new roi(isWhite, x, y, pieceImg);
-                                break;
-                        }
-                        plateau[y][x].isWhite = isWhite;
-                    }
-                    else if (y == 1 || y == 6) {
-                        let isWhite = (y == 6);
-                        let bOrW = isWhite ? 'w' : 'b';
-                        let pieceImg = new Image();
-                        pieceImg.onload = refresh;
-                        pieceImg.src = `./assets/img/pawn-${bOrW}.svg`;
-
-                        plateau[y][x].piece = new pion(isWhite, x, y, pieceImg);
-                        plateau[y][x].isWhite = isWhite;
-                    }
-
                 }
             }
-            console.log(plateau);
+
+            placePieces();
             refresh();
+        }
+
+        function makePieceImg(src, callback) {
+            let img = new Image();
+            img.onload = callback || refresh;
+            img.src = src;
+            return img;
+        }
+
+        function placePieces() {
+            const backRow = ["t", "c", "f", "Q", "K", "f", "c", "t"];
+
+            for (let side = 0; side < 2; side++) {
+                let isWhite = side === 1;
+                let bOrW = isWhite ? "w" : "b";
+                let y = isWhite ? 7 : 0;
+
+                for (let x = 0; x < 8; x++) {
+                    let pieceImg = makePieceImg(`./assets/img/${imgName(backRow[x])}-${bOrW}.svg`);
+                    let p;
+                    switch (backRow[x]) {
+                        case "t": p = new tour(isWhite, x, y, pieceImg); break;
+                        case "c": p = new cavalier(isWhite, x, y, pieceImg); break;
+                        case "f": p = new fou(isWhite, x, y, pieceImg); break;
+                        case "Q": p = new reine(isWhite, x, y, pieceImg); break;
+                        case "K": p = new roi(isWhite, x, y, pieceImg); break;
+                    }
+                    plateau[y][x].piece = p;
+                    plateau[y][x].isWhite = isWhite;
+
+                    if (backRow[x] === "Q") {
+                        if (isWhite) queenImgs.w = pieceImg;
+                        else queenImgs.b = pieceImg;
+                    }
+                }
+
+                let py = isWhite ? 6 : 1;
+                let pawnImg = makePieceImg(`./assets/img/pawn-${bOrW}.svg`);
+                for (let x = 0; x < 8; x++) {
+                    plateau[py][x].piece = new pion(isWhite, x, py, pawnImg);
+                    plateau[py][x].isWhite = isWhite;
+                }
+            }
+        }
+
+        function imgName(name) {
+            const map = { t: "rook", c: "knight", f: "bishop", Q: "queen", K: "king", p: "pawn" };
+            return map[name] || name;
         }
 
         function refresh() {
@@ -108,13 +120,12 @@
                 for (let x = 0; x < 8; x++) {
                     ctx.fillStyle = plateau[y][x].colorIndex;
                     ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                    ctx.strokeStyle = "#00000022";
                     ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
-                    if (plateau[y][x].piece !== "") {
-                        let p = plateau[y][x].piece;
-                        if (p.img && p.img.complete) {
-                            ctx.drawImage(p.img, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                        }
+                    let p = plateau[y][x].piece;
+                    if (p !== "" && p.img && p.img.complete && p.img.naturalWidth > 0) {
+                        ctx.drawImage(p.img, x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                     }
                 }
             }
@@ -123,120 +134,192 @@
         function rebuild() {
             for (let y = 0; y < 8; y++) {
                 for (let x = 0; x < 8; x++) {
-                    if ((x + y) % 2 === 0) {
-                        plateau[y][x].colorIndex = "white";
-                    }
-                    else {
-                        plateau[y][x].colorIndex = "#DEB887";
-                    }
+                    plateau[y][x].colorIndex = (x + y) % 2 !== 0 ? "#DEB887" : "white";
                 }
             }
         }
+
         function onClick(e) {
-            posX = Math.floor(e.clientX / 50);
-            posY = Math.floor(e.clientY / 50);
+            if (gameOver) return;
+
+            let rect = canvas.getBoundingClientRect();
+            let posX = Math.floor((e.clientX - rect.left) / CELL_SIZE);
+            let posY = Math.floor((e.clientY - rect.top) / CELL_SIZE);
+
+            if (posX < 0 || posX >= 8 || posY < 0 || posY >= 8) return;
+
             if (selectedPion !== null) {
-                selectedPion.piece.move();
-                if (isCheckmate(isWhiteTurn)) {
-                    document.getElementById("message").innerHTML = "ÉCHEC ET MAT ! Fin de la partie.";
-                } else {
-                    let kingFound = false;
-                    for (let y = 0; y < 8; y++) {
-                        for (let x = 0; x < 8; x++) {
-                            if (plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite === isWhiteTurn) {
-                                if (plateau[y][x].piece.isInChess(isWhiteTurn, x, y)) {
-                                    document.getElementById("message").innerHTML = "Échec au Roi !";
-                                }
-                                kingFound = true; break;
-                            }
-                        }
-                        if (kingFound) break;
-                    }
+                if (posX === selectedPion.piece.posX && posY === selectedPion.piece.posY) {
+                    selectedPion = null;
+                    rebuild();
+                    refresh();
+                    return;
                 }
+                if (plateau[posY][posX].piece !== "" && plateau[posY][posX].piece.isWhite === isWhiteTurn) {
+                    selectedPion = { piece: plateau[posY][posX].piece };
+                    rebuild();
+                    showRoutes(posX, posY);
+                    refresh();
+                    return;
+                }
+                selectedPion.piece.move(posX, posY);
                 selectedPion = null;
-                refresh();
             } else {
-                if (posX < 8 && posY < 8) {
-                    if (plateau[posY][posX].piece !== "") {
-                        if (plateau[posY][posX].piece.isWhite === isWhiteTurn) {
-                            selectedPion = { piece: plateau[posY][posX].piece };
-                            showRoutes(posX, posY);
-                        }
-                    }
+                if (plateau[posY][posX].piece !== "" && plateau[posY][posX].piece.isWhite === isWhiteTurn) {
+                    selectedPion = { piece: plateau[posY][posX].piece };
+                    rebuild();
+                    showRoutes(posX, posY);
+                    refresh();
                 }
-                refresh();
             }
         }
 
         function showRoutes(x, y) {
+            plateau[y][x].colorIndex = "#90ee9050";
             selectedPion.piece.showRoutes(x, y, isWhiteTurn);
         }
 
-        function getValidDestinations(x, y) {
-            plateau[y][x].piece.showRoutes(x, y, isWhiteTurn);
-            let destinations = [];
-            for (let row = 0; row < 8; row++) {
-                for (let col = 0; col < 8; col++) {
-                    if (plateau[row][col].colorIndex === "lightblue" || plateau[row][col].colorIndex === "lightcoral") {
-                        destinations.push({ x: col, y: row });
-                    }
-                }
-            }
-            rebuild();
-            return destinations;
-        }
 
-        function isCheckmate(isWhiteTurn) {
-            let kingX, kingY;
-            for (let y = 0; y < 8; y++) {
-                for (let x = 0; x < 8; x++) {
-                    if (plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite === isWhiteTurn) {
-                        kingX = x;
-                        kingY = y;
+        function isKingAttacked(x, y, isWhiteTurn) {
+            const lines = [
+                { dx: 0, dy: -1 }, { dx: 0, dy: 1 },
+                { dx: -1, dy: 0 }, { dx: 1, dy: 0 }
+            ];
+            for (let d of lines) {
+                let nx = x + d.dx;
+                let ny = y + d.dy;
+                while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                    if (plateau[ny][nx].piece !== "") {
+                        if (plateau[ny][nx].piece.isWhite !== isWhiteTurn) {
+                            let n = plateau[ny][nx].piece.name;
+                            if (n === "t" || n === "Q") return true;
+                        }
                         break;
                     }
+                    nx += d.dx;
+                    ny += d.dy;
                 }
             }
-            if (!plateau[kingY][kingX].piece.isInChess(isWhiteTurn, kingX, kingY)) {
-                return false;
+
+            const diags = [
+                { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
+                { dx: -1, dy: 1 }, { dx: 1, dy: 1 }
+            ];
+            for (let d of diags) {
+                let nx = x + d.dx;
+                let ny = y + d.dy;
+                while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                    if (plateau[ny][nx].piece !== "") {
+                        if (plateau[ny][nx].piece.isWhite !== isWhiteTurn) {
+                            let n = plateau[ny][nx].piece.name;
+                            if (n === "f" || n === "Q") return true;
+                        }
+                        break;
+                    }
+                    nx += d.dx;
+                    ny += d.dy;
+                }
             }
 
+            const knightMoves = [
+                { dx: -2, dy: -1 }, { dx: -2, dy: 1 },
+                { dx: 2, dy: -1 }, { dx: 2, dy: 1 },
+                { dx: -1, dy: -2 }, { dx: -1, dy: 2 },
+                { dx: 1, dy: -2 }, { dx: 1, dy: 2 }
+            ];
+            for (let m of knightMoves) {
+                let nx = x + m.dx, ny = y + m.dy;
+                if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                    if (plateau[ny][nx].piece !== "" && plateau[ny][nx].piece.isWhite !== isWhiteTurn && plateau[ny][nx].piece.name === "c") return true;
+                }
+            }
+
+            let pawnDir = isWhiteTurn ? -1 : 1;
+            let pawnRow = y + pawnDir;
+            if (pawnRow >= 0 && pawnRow < 8) {
+                if (x - 1 >= 0 && plateau[pawnRow][x - 1].piece !== "" && plateau[pawnRow][x - 1].piece.isWhite !== isWhiteTurn && plateau[pawnRow][x - 1].piece.name === "p") return true;
+                if (x + 1 < 8 && plateau[pawnRow][x + 1].piece !== "" && plateau[pawnRow][x + 1].piece.isWhite !== isWhiteTurn && plateau[pawnRow][x + 1].piece.name === "p") return true;
+            }
+
+            const kingMoves = [
+                { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
+                { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
+                { dx: -1, dy: 1 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 }
+            ];
+            for (let m of kingMoves) {
+                let nx = x + m.dx, ny = y + m.dy;
+                if (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+                    if (plateau[ny][nx].piece !== "" && plateau[ny][nx].piece.isWhite !== isWhiteTurn && plateau[ny][nx].piece.name === "K") return true;
+                }
+            }
+
+            return false;
+        }
+
+
+        function checkGameState() {
+            let hasLegalMove = hasAnyLegalMove(isWhiteTurn);
+
+            let kingX = -1, kingY = -1;
             for (let y = 0; y < 8; y++) {
                 for (let x = 0; x < 8; x++) {
-                    let currentPiece = plateau[y][x].piece;
-                    if (currentPiece !== "" && currentPiece.isWhite === isWhiteTurn) {
-                        let destinations = getValidDestinations(x, y);
-                        for (let dest of destinations) {
-                            let originalSourcePiece = plateau[y][x].piece;
-                            let originalDestPiece = plateau[dest.y][dest.x].piece;
-                            let originalDestIsWhite = plateau[dest.y][dest.x].isWhite;
-                            plateau[dest.y][dest.x].piece = currentPiece;
-                            plateau[dest.y][dest.x].isWhite = isWhiteTurn;
-                            currentPiece.posX = dest.x;
-                            currentPiece.posY = dest.y;
-                            plateau[y][x].piece = "";
-                            plateau[y][x].isWhite = null;
-                            let testKingX = (currentPiece.name === "K") ? dest.x : kingX;
-                            let testKingY = (currentPiece.name === "K") ? dest.y : kingY;
-                            let roiEstToujoursEnEchec = plateau[testKingY][testKingX].piece.isInChess(isWhiteTurn, testKingX, testKingY);
-                            plateau[y][x].piece = originalSourcePiece;
-                            plateau[y][x].isWhite = isWhiteTurn;
-                            currentPiece.posX = x;
-                            currentPiece.posY = y;
-                            plateau[dest.y][dest.x].piece = originalDestPiece;
-                            plateau[dest.y][dest.x].isWhite = originalDestIsWhite;
-                            if (!roiEstToujoursEnEchec) {
-                                rebuild();
-                                return false;
+                    if (plateau[y][x].piece !== "" && plateau[y][x].piece.name === "K" && plateau[y][x].piece.isWhite === isWhiteTurn) {
+                        kingX = x; kingY = y; break;
+                    }
+                }
+                if (kingX !== -1) break;
+            }
+
+            let inCheck = isKingAttacked(kingX, kingY, isWhiteTurn);
+
+            if (!hasLegalMove) {
+                if (inCheck) {
+                    gameOver = true;
+                    let winner = isWhiteTurn ? "Noirs" : "Blancs";
+                    document.getElementById("message").innerHTML = `ÉCHEC ET MAT ! Les ${winner} gagnent !`;
+                    document.getElementById("turn").innerHTML = "Partie terminée";
+                } else {
+                    gameOver = true;
+                    document.getElementById("message").innerHTML = "PAT ! Match nul.";
+                    document.getElementById("turn").innerHTML = "Partie terminée";
+                }
+            } else if (inCheck) {
+                document.getElementById("message").innerHTML = "Échec au Roi !";
+                document.getElementById("turn").innerHTML = isWhiteTurn ? "Au tour des Blancs" : "Au tour des Noirs";
+            } else {
+                document.getElementById("message").innerHTML = "";
+                document.getElementById("turn").innerHTML = isWhiteTurn ? "Au tour des Blancs" : "Au tour des Noirs";
+            }
+        }
+
+        function hasAnyLegalMove(isWhiteTurn) {
+            for (let y = 0; y < 8; y++) {
+                for (let x = 0; x < 8; x++) {
+                    let p = plateau[y][x].piece;
+                    if (p === "" || p.isWhite !== isWhiteTurn) continue;
+
+                    let savedSelected = selectedPion;
+                    selectedPion = { piece: p };
+
+                    p.showRoutes(x, y, isWhiteTurn);
+                    let hasMove = false;
+                    for (let ry = 0; ry < 8; ry++) {
+                        for (let rx = 0; rx < 8; rx++) {
+                            if (plateau[ry][rx].colorIndex === "lightblue" || plateau[ry][rx].colorIndex === "lightcoral") {
+                                hasMove = true;
                             }
                         }
                     }
+                    rebuild();
+                    selectedPion = savedSelected;
+
+                    if (hasMove) return true;
                 }
             }
-            rebuild();
-            return true;
+            return false;
         }
 
+        init();
     </script>
 </body>
 

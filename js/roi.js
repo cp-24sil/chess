@@ -1,110 +1,39 @@
 class roi extends piece {
   constructor(isWhite, posX, posY, img) {
     super("K", isWhite, posX, posY, img);
-    this.kingAsMove = false;
-  }
-  showRoutes(x, y, isWhiteTurn) {
-    let Ka = x;
-    let Kb = y;
-    let nbPathValid = 0;
-    if (plateau[Kb][Ka].isWhite === isWhiteTurn) {
-      if (Kb - 1 >= 0) {
-        if (Ka - 1 >= 0) {
-          if (plateau[Kb - 1][Ka - 1].piece === "") {
-            plateau[Kb - 1][Ka - 1].colorIndex = "lightblue";
-            nbPathValid++;
-          } else if (plateau[Kb - 1][Ka - 1].isWhite !== isWhiteTurn) {
-            plateau[Kb - 1][Ka - 1].colorIndex = "lightcoral";
-            nbPathValid++;
-          }
-        }
-        if (Ka + 1 < 8) {
-          if (plateau[Kb - 1][Ka + 1].piece === "") {
-            plateau[Kb - 1][Ka + 1].colorIndex = "lightblue";
-            nbPathValid++;
-          } else if (plateau[Kb - 1][Ka + 1].isWhite !== isWhiteTurn) {
-            plateau[Kb - 1][Ka + 1].colorIndex = "lightcoral";
-            nbPathValid++;
-          }
-        }
-        if (plateau[Kb - 1][Ka].piece === "") {
-          plateau[Kb - 1][Ka].colorIndex = "lightblue";
-          nbPathValid++;
-        } else if (plateau[Kb - 1][Ka].isWhite !== isWhiteTurn) {
-          plateau[Kb - 1][Ka].colorIndex = "lightcoral";
-          nbPathValid++;
-        }
-      }
-      if (Kb + 1 < 8) {
-        if (Ka - 1 >= 0) {
-          if (plateau[Kb + 1][Ka - 1].piece === "") {
-            plateau[Kb + 1][Ka - 1].colorIndex = "lightblue";
-            nbPathValid++;
-          } else if (plateau[Kb + 1][Ka - 1].isWhite !== isWhiteTurn) {
-            plateau[Kb + 1][Ka - 1].colorIndex = "lightcoral";
-            nbPathValid++;
-          }
-        } if (Ka + 1 < 8) {
-          if (plateau[Kb + 1][Ka + 1].piece === "") {
-            plateau[Kb + 1][Ka + 1].colorIndex = "lightblue";
-            nbPathValid++;
-          } else if (plateau[Kb + 1][Ka + 1].isWhite !== isWhiteTurn) {
-            plateau[Kb + 1][Ka + 1].colorIndex = "lightcoral";
-            nbPathValid++;
-          }
-        } if (plateau[Kb + 1][Ka].piece === "") {
-          plateau[Kb + 1][Ka].colorIndex = "lightblue";
-          nbPathValid++;
-        } else if (plateau[Kb + 1][Ka].isWhite !== isWhiteTurn) {
-          plateau[Kb + 1][Ka].colorIndex = "lightcoral";
-          nbPathValid++;
-        }
-      }
-      if (Ka + 1 < 8) {
-        if (plateau[Kb][Ka + 1].piece === "") {
-          plateau[Kb][Ka + 1].colorIndex = "lightblue";
-          nbPathValid++;
-        } else if (plateau[Kb][Ka + 1].isWhite !== isWhiteTurn) {
-          plateau[Kb][Ka + 1].colorIndex = "lightcoral";
-          nbPathValid++;
-        }
-      } if (Ka - 1 >= 0) {
-        if (plateau[Kb][Ka - 1].piece === "") {
-          plateau[Kb][Ka - 1].colorIndex = "lightblue";
-          nbPathValid++;
-        } else if (plateau[Kb][Ka - 1].isWhite !== isWhiteTurn) {
-          plateau[Kb][Ka - 1].colorIndex = "lightcoral";
-          nbPathValid++;
-        }
-      }
-      console.log("Chemins disponibles pour le roi :", nbPathValid);
-
-      if (KingIsInChess) {
-        console.log(nbPathValid);
-        if (nbPathValid === 0) {
-          document.getElementById("message").innerHTML = "ÉCHEC ET MAT !";
-        } else {
-          document.getElementById("message").innerHTML = "ÉCHEC AU ROI !";
-          this.kingAsMove = true;
-        }
-      }
-    } else {
-      rebuild();
-      refresh();
-    }
+    this.hasMoved = false;
   }
 
-  move() {
+  move(posX, posY) {
     if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
-      plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
+      let fromX = selectedPion.piece.posX;
+      let fromY = selectedPion.piece.posY;
+
+      if (Math.abs(posX - fromX) === 2) {
+        let rookFromX = posX > fromX ? 7 : 0;
+        let rookToX = posX > fromX ? posX - 1 : posX + 1;
+
+        let rookPiece = plateau[fromY][rookFromX].piece;
+        plateau[fromY][rookFromX].piece = "";
+        plateau[fromY][rookFromX].isWhite = null;
+        plateau[fromY][rookToX].piece = rookPiece;
+        plateau[fromY][rookToX].isWhite = isWhiteTurn;
+        rookPiece.posX = rookToX;
+        rookPiece.posY = fromY;
+        rookPiece.hasMoved = true;
+      }
+
+      plateau[fromY][fromX].piece = "";
+      plateau[fromY][fromX].isWhite = null;
       selectedPion.piece.posX = posX;
       selectedPion.piece.posY = posY;
       plateau[posY][posX].piece = selectedPion.piece;
       plateau[posY][posX].isWhite = isWhiteTurn;
-      this.kingAsMove = true;
+      this.hasMoved = true;
+      enPassantTarget = null;
       rebuild();
       isWhiteTurn = !isWhiteTurn;
-      document.getElementById("message").innerHTML = isWhiteTurn ? "Au tour des Blancs" : "Au tour des Noirs";
+      checkGameState();
       refresh();
     } else {
       rebuild();
@@ -112,94 +41,55 @@ class roi extends piece {
     }
   }
 
-  isInChess(isWhiteTurn, x, y) {
-    let kingAttacked = false;
+  showRoutes(x, y, isWhiteTurn) {
+    if (this.isWhite !== isWhiteTurn) return;
 
-    for (let i = y - 1; i >= 0; i--) {
-      if (plateau[i][x].piece !== "") {
-        if (plateau[i][x].piece.isWhite !== isWhiteTurn) {
-          if (plateau[i][x].piece.name === "t" || plateau[i][x].piece.name === "Q") kingAttacked = true;
-        }
-        break;
-      }
-    }
-    for (let i = y + 1; i < 8; i++) {
-      if (plateau[i][x].piece !== "") {
-        if (plateau[i][x].piece.isWhite !== isWhiteTurn) {
-          if (plateau[i][x].piece.name === "t" || plateau[i][x].piece.name === "Q") kingAttacked = true;
-        }
-        break;
-      }
-    }
-    for (let i = x - 1; i >= 0; i--) {
-      if (plateau[y][i].piece !== "") {
-        if (plateau[y][i].piece.isWhite !== isWhiteTurn) {
-          if (plateau[y][i].piece.name === "t" || plateau[y][i].piece.name === "Q") kingAttacked = true;
-        }
-        break;
-      }
-    }
-    for (let i = x + 1; i < 8; i++) {
-      if (plateau[y][i].piece !== "") {
-        if (plateau[y][i].piece.isWhite !== isWhiteTurn) {
-          if (plateau[y][i].piece.name === "t" || plateau[y][i].piece.name === "Q") kingAttacked = true;
-        }
-        break;
-      }
-    }
-    const diags = [
-      { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
-      { dx: -1, dy: 1 }, { dx: 1, dy: 1 }
+    const moves = [
+      { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
+      { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
+      { dx: -1, dy: 1 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 }
     ];
-    for (let d of diags) {
-      let nx = x + d.dx;
-      let ny = y + d.dy;
-      while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
-        if (plateau[ny][nx].piece !== "") {
-          if (plateau[ny][nx].piece.isWhite !== isWhiteTurn) {
-            if (plateau[ny][nx].piece.name === "f" || plateau[ny][nx].piece.name === "Q") kingAttacked = true;
-          }
-          break;
-        }
-        nx += d.dx;
-        ny += d.dy;
-      }
+
+    for (let m of moves) {
+      let nx = x + m.dx;
+      let ny = y + m.dy;
+      if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8) continue;
+      if (plateau[ny][nx].piece !== "" && plateau[ny][nx].isWhite === isWhiteTurn) continue;
+      this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
     }
-    let pawnRow = isWhiteTurn ? y - 1 : y + 1;
-    if (pawnRow >= 0 && pawnRow < 8) {
-      if (x - 1 >= 0 && plateau[pawnRow][x - 1].piece !== "") {
-        if (plateau[pawnRow][x - 1].piece.isWhite !== isWhiteTurn && plateau[pawnRow][x - 1].piece.name === "p") kingAttacked = true;
-      }
-      if (x + 1 < 8 && plateau[pawnRow][x + 1].piece !== "") {
-        if (plateau[pawnRow][x + 1].piece.isWhite !== isWhiteTurn && plateau[pawnRow][x + 1].piece.name === "p") kingAttacked = true;
-      }
+    if (!this.hasMoved) {
+      this.tryRoque(x, y, isWhiteTurn, 1);
+      this.tryRoque(x, y, isWhiteTurn, -1);
+    }
+  }
+
+  tryRoque(x, y, isWhiteTurn, direction) {
+    if (isKingAttacked(x, y, isWhiteTurn)) return;
+
+    let rookX = direction === 1 ? 7 : 0;
+    let rookPiece = plateau[y][rookX].piece;
+    if (rookPiece === "" || rookPiece.name !== "t" || rookPiece.hasMoved) return;
+
+    let startX = Math.min(x, rookX) + 1;
+    let endX = Math.max(x, rookX) - 1;
+    for (let i = startX; i <= endX; i++) {
+      if (plateau[y][i].piece !== "") return;
     }
 
-    if (y - 2 >= 0) {
-      if (x - 1 >= 0)
-        if (plateau[y - 2][x - 1].piece !== "" && plateau[y - 2][x - 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
-      if (x + 1 < 8)
-        if (plateau[y - 2][x + 1].piece !== "" && plateau[y - 2][x + 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
+    let step = direction;
+    for (let i = 1; i <= 2; i++) {
+      let checkX = x + step * i;
+      plateau[y][x].piece = "";
+      plateau[y][checkX].piece = this;
+      this.posX = checkX;
+      let attacked = isKingAttacked(checkX, y, isWhiteTurn);
+      plateau[y][checkX].piece = "";
+      plateau[y][x].piece = this;
+      this.posX = x;
+      if (attacked) return;
     }
-    if (y - 1 >= 0) {
-      if (x - 2 >= 0)
-        if (plateau[y - 1][x - 2].piece !== "" && plateau[y - 1][x - 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
-      if (x + 2 < 8)
-        if (plateau[y - 1][x + 2].piece !== "" && plateau[y - 1][x + 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
-    }
-    if (y + 1 < 8) {
-      if (x + 2 < 8)
-        if (plateau[y + 1][x + 2].piece !== "" && plateau[y + 1][x + 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
-      if (x - 2 >= 0)
-        if (plateau[y + 1][x - 2].piece !== "" && plateau[y + 1][x - 2].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
-    }
-    if (y + 2 < 8) {
-      if (x - 1 >= 0)
-        if (plateau[y + 2][x - 1].piece !== "" && plateau[y + 2][x - 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
-      if (x + 1 < 8)
-        if (plateau[y + 2][x + 1].piece !== "" && plateau[y + 2][x + 1].isWhite !== selectedPion.piece.isWhite) kingAttacked = true;
-    }
-    KingIsInChess = kingAttacked;
-    return kingAttacked;
+
+    let destX = x + direction * 2;
+    plateau[y][destX].colorIndex = "lightblue";
   }
 }

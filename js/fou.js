@@ -2,59 +2,28 @@ class fou extends piece {
   constructor(isWhite, posX, posY, img) {
     super("f", isWhite, posX, posY, img);
   }
+
   showRoutes(x, y, isWhiteTurn) {
-    let Fa = x;
-    let Fb = y;
-    canA = true;
-    canB = true;
-    canC = true;
-    canD = true;
-    if (selectedPion.piece.isWhite === isWhiteTurn) {
-      for (let i = 1; i < 8; i++) {
-        if (Fb - i >= 0) {
-          if (Fa - i >= 0)
-            if ((plateau[Fb - i][Fa - i].piece === "" || plateau[Fb - i][Fa - i].isWhite != isWhiteTurn) && canA === true) {
-              plateau[Fb - i][Fa - i].colorIndex = "lightblue";
-              if (plateau[Fb - i][Fa - i].piece !== "" && plateau[Fb - i][Fa - i].isWhite != isWhiteTurn) {
-                plateau[Fb - i][Fa - i].colorIndex = "lightcoral";
-                canA = false;
-              }
-            }
-            else canA = false;
-          if (Fa + i < 8)
-            if ((plateau[Fb - i][Fa + i].piece === "" || plateau[Fb - i][Fa + i].isWhite != isWhiteTurn) && canB === true) {
-              plateau[Fb - i][Fa + i].colorIndex = "lightblue";
-              if (plateau[Fb - i][Fa + i].piece !== "" && plateau[Fb - i][Fa + i].isWhite != isWhiteTurn) {
-                plateau[Fb - i][Fa + i].colorIndex = "lightcoral";
-                canB = false;
-              }
-            }
-            else canB = false;
+    if (this.isWhite !== isWhiteTurn) return;
+
+    const diags = [
+      { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
+      { dx: -1, dy: 1 },  { dx: 1, dy: 1 }
+    ];
+
+    for (let d of diags) {
+      let nx = x + d.dx;
+      let ny = y + d.dy;
+      while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
+        if (plateau[ny][nx].piece === "") {
+          this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+        } else {
+          if (plateau[ny][nx].isWhite !== isWhiteTurn) this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+          break;
         }
-        if (Fb + i < 8) {
-          if (Fa - i >= 0)
-            if ((plateau[Fb + i][Fa - i].piece === "" || plateau[Fb + i][Fa - i].isWhite != isWhiteTurn) && canC === true) {
-              plateau[Fb + i][Fa - i].colorIndex = "lightblue";
-              if (plateau[Fb + i][Fa - i].piece !== "" && plateau[Fb + i][Fa - i].isWhite != isWhiteTurn) {
-                plateau[Fb + i][Fa - i].colorIndex = "lightcoral";
-                canC = false;
-              }
-            }
-            else canC = false;
-          if (Fa + i < 8)
-            if ((plateau[Fb + i][Fa + i].piece === "" || plateau[Fb + i][Fa + i].isWhite != isWhiteTurn) && canD === true) {
-              plateau[Fb + i][Fa + i].colorIndex = "lightblue";
-              if (plateau[Fb + i][Fa + i].piece !== "" && plateau[Fb + i][Fa + i].isWhite != isWhiteTurn) {
-                plateau[Fb + i][Fa + i].colorIndex = "lightcoral";
-                canD = false;
-              }
-            }
-            else canD = false;
-        }
+        nx += d.dx;
+        ny += d.dy;
       }
-    } else {
-      rebuild();
-      refresh();
     }
   }
 }
