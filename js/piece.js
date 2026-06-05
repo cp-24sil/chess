@@ -51,7 +51,7 @@ class piece {
     return inCheck;
   }
 
-  tryMarkCell(fromX, fromY, toX, toY, isWhiteTurn) {
+  colorCell(fromX, fromY, toX, toY, isWhiteTurn) {
     if (this.wouldLeaveKingInCheck(fromX, fromY, toX, toY, isWhiteTurn)) return;
     if (plateau[toY][toX].piece !== "" && plateau[toY][toX].piece.isWhite !== isWhiteTurn) {
       plateau[toY][toX].colorIndex = "lightcoral";

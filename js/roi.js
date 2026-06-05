@@ -12,7 +12,6 @@ class roi extends piece {
       if (Math.abs(posX - fromX) === 2) {
         let rookFromX = posX > fromX ? 7 : 0;
         let rookToX = posX > fromX ? posX - 1 : posX + 1;
-
         let rookPiece = plateau[fromY][rookFromX].piece;
         plateau[fromY][rookFromX].piece = "";
         plateau[fromY][rookFromX].isWhite = null;
@@ -55,7 +54,7 @@ class roi extends piece {
       let ny = y + m.dy;
       if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8) continue;
       if (plateau[ny][nx].piece !== "" && plateau[ny][nx].isWhite === isWhiteTurn) continue;
-      this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+      this.colorCell(x, y, nx, ny, isWhiteTurn);
     }
     if (!this.hasMoved) {
       this.tryRoque(x, y, isWhiteTurn, 1);

@@ -15,9 +15,9 @@ class reine extends piece {
       let ny = y + d.dy;
       while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
         if (plateau[ny][nx].piece === "") {
-          this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+          this.colorCell(x, y, nx, ny, isWhiteTurn);
         } else {
-          if (plateau[ny][nx].isWhite !== isWhiteTurn) this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+          if (plateau[ny][nx].isWhite !== isWhiteTurn) this.colorCell(x, y, nx, ny, isWhiteTurn);
           break;
         }
         nx += d.dx;
@@ -27,16 +27,16 @@ class reine extends piece {
 
     const diags = [
       { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
-      { dx: -1, dy: 1 },  { dx: 1, dy: 1 }
+      { dx: -1, dy: 1 }, { dx: 1, dy: 1 }
     ];
     for (let d of diags) {
       let nx = x + d.dx;
       let ny = y + d.dy;
       while (nx >= 0 && nx < 8 && ny >= 0 && ny < 8) {
         if (plateau[ny][nx].piece === "") {
-          this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+          this.colorCell(x, y, nx, ny, isWhiteTurn);
         } else {
-          if (plateau[ny][nx].isWhite !== isWhiteTurn) this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+          if (plateau[ny][nx].isWhite !== isWhiteTurn) this.colorCell(x, y, nx, ny, isWhiteTurn);
           break;
         }
         nx += d.dx;

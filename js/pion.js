@@ -56,28 +56,28 @@ class pion extends piece {
     let startRow = this.isWhite ? 6 : 1;
 
     if (y + dir >= 0 && y + dir < 8 && plateau[y + dir][x].piece === "") {
-      this.tryMarkCell(x, y, x, y + dir, isWhiteTurn);
+      this.colorCell(x, y, x, y + dir, isWhiteTurn);
 
       if (y === startRow && plateau[y + dir * 2][x].piece === "") {
-        this.tryMarkCell(x, y, x, y + dir * 2, isWhiteTurn);
+        this.colorCell(x, y, x, y + dir * 2, isWhiteTurn);
       }
     }
 
     if (x - 1 >= 0 && y + dir >= 0 && y + dir < 8) {
       if (plateau[y + dir][x - 1].piece !== "" && plateau[y + dir][x - 1].isWhite !== isWhiteTurn) {
-        this.tryMarkCell(x, y, x - 1, y + dir, isWhiteTurn);
+        this.colorCell(x, y, x - 1, y + dir, isWhiteTurn);
       }
       if (enPassantTarget && x - 1 === enPassantTarget.x && y + dir === enPassantTarget.y) {
-        this.tryMarkCell(x, y, x - 1, y + dir, isWhiteTurn);
+        this.colorCell(x, y, x - 1, y + dir, isWhiteTurn);
       }
     }
 
     if (x + 1 < 8 && y + dir >= 0 && y + dir < 8) {
       if (plateau[y + dir][x + 1].piece !== "" && plateau[y + dir][x + 1].isWhite !== isWhiteTurn) {
-        this.tryMarkCell(x, y, x + 1, y + dir, isWhiteTurn);
+        this.colorCell(x, y, x + 1, y + dir, isWhiteTurn);
       }
       if (enPassantTarget && x + 1 === enPassantTarget.x && y + dir === enPassantTarget.y) {
-        this.tryMarkCell(x, y, x + 1, y + dir, isWhiteTurn);
+        this.colorCell(x, y, x + 1, y + dir, isWhiteTurn);
       }
     }
   }

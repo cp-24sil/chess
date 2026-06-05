@@ -8,9 +8,9 @@ class cavalier extends piece {
 
     const moves = [
       { dx: -2, dy: -1 }, { dx: -2, dy: 1 },
-      { dx: 2, dy: -1 },  { dx: 2, dy: 1 },
+      { dx: 2, dy: -1 }, { dx: 2, dy: 1 },
       { dx: -1, dy: -2 }, { dx: -1, dy: 2 },
-      { dx: 1, dy: -2 },  { dx: 1, dy: 2 }
+      { dx: 1, dy: -2 }, { dx: 1, dy: 2 }
     ];
 
     for (let m of moves) {
@@ -18,7 +18,7 @@ class cavalier extends piece {
       let ny = y + m.dy;
       if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8) continue;
       if (plateau[ny][nx].piece !== "" && plateau[ny][nx].isWhite === isWhiteTurn) continue;
-      this.tryMarkCell(x, y, nx, ny, isWhiteTurn);
+      this.colorCell(x, y, nx, ny, isWhiteTurn);
     }
   }
 }
