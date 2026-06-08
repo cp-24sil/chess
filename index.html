@@ -260,7 +260,7 @@
                     refresh();
                     return;
                 }
-                if (plateau[posY][posX].piece != '') {
+                if (plateau[posY][posX].piece != '' && plateau[posY][posX].colorIndex == 'lightcoral') {
                     pieceEat.push(plateau[posY][posX].piece);
                     ctxPieceWhite.clearRect(0, 0, canvasPieceWhite.width, canvasPieceWhite.height);
                     ctxPieceBlack.clearRect(0, 0, canvasPieceBlack.width, canvasPieceBlack.height);
