@@ -1,10 +1,11 @@
 class fou extends piece {
-  constructor(isWhite, posX, posY, img, diags) {
+  diags: { dx: number; dy: number }[]
+  constructor(isWhite: boolean, posX: number, posY: number, img: HTMLImageElement, diags: Array<{ dx: number, dy: number }>) {
     super("f", isWhite, posX, posY, img);
     this.diags = diags;
   }
 
-  showRoutes(x, y, isWhiteTurn) {
+  showRoutes(x: number, y: number, isWhiteTurn: boolean) {
     if (this.isWhite !== isWhiteTurn) return;
     for (let d of this.diags) {
       let nx = x + d.dx;

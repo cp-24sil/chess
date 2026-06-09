@@ -1,11 +1,13 @@
 class roi extends piece {
-  constructor(isWhite, posX, posY, img, moves) {
+  moves: { dx: number, dy: number }[];
+  hasMoved: boolean;
+  constructor(isWhite: boolean, posX: number, posY: number, img: HTMLImageElement, moves: { dx: number, dy: number }[]) {
     super("K", isWhite, posX, posY, img);
     this.moves = moves;
     this.hasMoved = false;
   }
 
-  move(posX, posY) {
+  move(posX: number, posY: number) {
     if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
       let fromX = selectedPion.piece.posX;
       let fromY = selectedPion.piece.posY;
@@ -38,7 +40,7 @@ class roi extends piece {
     }
   }
 
-  showRoutes(x, y, isWhiteTurn) {
+  showRoutes(x: number, y: number, isWhiteTurn: boolean) {
     if (this.isWhite !== isWhiteTurn) return;
     for (let m of this.moves) {
       let nx = x + m.dx;
@@ -53,7 +55,7 @@ class roi extends piece {
     }
   }
 
-  tryRoque(x, y, isWhiteTurn, direction) {
+  tryRoque(x: number, y: number, isWhiteTurn: boolean, direction: number) {
     if (isKingAttacked(x, y, isWhiteTurn)) return;
 
     let rookX = direction === 1 ? 7 : 0;

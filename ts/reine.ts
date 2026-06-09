@@ -1,5 +1,7 @@
 class reine extends piece {
-  constructor(isWhite, posX, posY, img, lines, diags) {
+  lines: { dx: number, dy: number }[];
+  diags: { dx: number, dy: number }[];
+  constructor(isWhite: boolean, posX: number, posY: number, img: HTMLImageElement, lines: { dx: number, dy: number }[], diags: { dx: number, dy: number }[]) {
     super("Q", isWhite, posX, posY, img);
     this.lines = lines;
     this.diags = diags;

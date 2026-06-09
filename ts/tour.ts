@@ -1,11 +1,13 @@
 class tour extends piece {
-  constructor(isWhite, posX, posY, img, lines) {
+  lines: { dx: number, dy: number }[];
+  hasMoved: boolean;
+  constructor(isWhite: boolean, posX: number, posY: number, img: HTMLImageElement, lines: { dx: number, dy: number }[]) {
     super("t", isWhite, posX, posY, img);
     this.lines = lines;
     this.hasMoved = false;
   }
 
-  move(posX, posY) {
+  move(posX: number, posY: number) {
     if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
       plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
       selectedPion.piece.posX = posX;
@@ -24,7 +26,7 @@ class tour extends piece {
     }
   }
 
-  showRoutes(x, y, isWhiteTurn) {
+  showRoutes(x: number, y: number, isWhiteTurn: boolean) {
     if (this.isWhite !== isWhiteTurn) return;
     for (let d of this.lines) {
       let nx = x + d.dx;

@@ -1,5 +1,10 @@
 class piece {
-  constructor(name, isWhite, posX, posY, img) {
+  name: string;
+  posX: number;
+  posY: number;
+  isWhite: boolean;
+  img: HTMLImageElement;
+  constructor(name: string, isWhite: boolean, posX: number, posY: number, img: HTMLImageElement) {
     this.name = name;
     this.posX = posX;
     this.posY = posY;
@@ -7,7 +12,7 @@ class piece {
     this.img = img;
   }
 
-  wouldLeaveKingInCheck(fromX, fromY, toX, toY, isWhiteTurn) {
+  wouldLeaveKingInCheck(fromX: number, fromY: number, toX: number, toY: number, isWhiteTurn: boolean) {
     let savedSrcPiece = plateau[fromY][fromX].piece;
     let savedDstPiece = plateau[toY][toX].piece;
 
@@ -46,7 +51,7 @@ class piece {
     return inCheck;
   }
 
-  colorCell(fromX, fromY, toX, toY, isWhiteTurn) {
+  colorCell(fromX: number, fromY: number, toX: number, toY: number, isWhiteTurn: boolean) {
     if (this.wouldLeaveKingInCheck(fromX, fromY, toX, toY, isWhiteTurn)) return;
     if (plateau[toY][toX].piece !== "" && plateau[toY][toX].piece.isWhite !== isWhiteTurn) {
       plateau[toY][toX].colorIndex = "lightcoral";
@@ -55,7 +60,7 @@ class piece {
     }
   }
 
-  move(posX, posY) {
+  move(posX: number, posY: number) {
     if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
       plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
       selectedPion.piece.posX = posX;

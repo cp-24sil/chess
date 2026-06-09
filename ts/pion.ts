@@ -1,11 +1,11 @@
 class pion extends piece {
-
-  constructor(isWhite, posX, posY, img) {
+  hasMoved: boolean;
+  constructor(isWhite: boolean, posX: number, posY: number, img: HTMLImageElement) {
     super("p", isWhite, posX, posY, img);
     this.hasMoved = false;
   }
 
-  move(posX, posY) {
+  move(posX: number, posY: number) {
     if (plateau[posY][posX].colorIndex == "lightblue" || plateau[posY][posX].colorIndex == "lightcoral") {
       if (enPassantTarget && posX === enPassantTarget.x && posY === enPassantTarget.y) {
         let capturedY = isWhiteTurn ? posY + 1 : posY - 1;
@@ -45,7 +45,7 @@ class pion extends piece {
     }
   }
 
-  showRoutes(x, y, isWhiteTurn) {
+  showRoutes(x: number, y: number, isWhiteTurn: boolean) {
     if (this.isWhite !== isWhiteTurn) return;
 
     let dir = this.isWhite ? -1 : 1;
