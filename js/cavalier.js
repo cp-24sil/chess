@@ -1,23 +1,17 @@
 class cavalier extends piece {
-  constructor(isWhite, posX, posY, img) {
+  constructor(isWhite, posX, posY, img, moves) {
     super("c", isWhite, posX, posY, img);
+    this.moves = moves;
   }
 
   showRoutes(x, y, isWhiteTurn) {
     if (this.isWhite !== isWhiteTurn) return;
 
-    const moves = [
-      { dx: -2, dy: -1 }, { dx: -2, dy: 1 },
-      { dx: 2, dy: -1 }, { dx: 2, dy: 1 },
-      { dx: -1, dy: -2 }, { dx: -1, dy: 2 },
-      { dx: 1, dy: -2 }, { dx: 1, dy: 2 }
-    ];
-
-    for (let m of moves) {
+    for (let m of this.moves) {
       let nx = x + m.dx;
       let ny = y + m.dy;
       if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8) continue;
-      if (plateau[ny][nx].piece !== "" && plateau[ny][nx].isWhite === isWhiteTurn) continue;
+      if (plateau[ny][nx].piece !== "" && plateau[ny][nx].piece.isWhite === isWhiteTurn) continue;
       this.colorCell(x, y, nx, ny, isWhiteTurn);
     }
   }

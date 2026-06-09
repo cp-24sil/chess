@@ -1,6 +1,7 @@
 class roi extends piece {
-  constructor(isWhite, posX, posY, img) {
+  constructor(isWhite, posX, posY, img, moves) {
     super("K", isWhite, posX, posY, img);
+    this.moves = moves;
     this.hasMoved = false;
   }
 
@@ -14,46 +15,36 @@ class roi extends piece {
         let rookToX = posX > fromX ? posX - 1 : posX + 1;
         let rookPiece = plateau[fromY][rookFromX].piece;
         plateau[fromY][rookFromX].piece = "";
-        plateau[fromY][rookFromX].isWhite = null;
         plateau[fromY][rookToX].piece = rookPiece;
-        plateau[fromY][rookToX].isWhite = isWhiteTurn;
         rookPiece.posX = rookToX;
         rookPiece.posY = fromY;
         rookPiece.hasMoved = true;
       }
 
       plateau[fromY][fromX].piece = "";
-      plateau[fromY][fromX].isWhite = null;
       selectedPion.piece.posX = posX;
       selectedPion.piece.posY = posY;
       plateau[posY][posX].piece = selectedPion.piece;
-      plateau[posY][posX].isWhite = isWhiteTurn;
       this.hasMoved = true;
       enPassantTarget = null;
       rebuild();
-      isWhiteTurn = !isWhiteTurn;
-      checkGameState();
+      checkGameState(!isWhiteTurn);
       refresh();
+      return !isWhiteTurn;
     } else {
       rebuild();
       refresh();
+      return isWhiteTurn;
     }
   }
 
   showRoutes(x, y, isWhiteTurn) {
     if (this.isWhite !== isWhiteTurn) return;
-
-    const moves = [
-      { dx: -1, dy: -1 }, { dx: 0, dy: -1 }, { dx: 1, dy: -1 },
-      { dx: -1, dy: 0 }, { dx: 1, dy: 0 },
-      { dx: -1, dy: 1 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 }
-    ];
-
-    for (let m of moves) {
+    for (let m of this.moves) {
       let nx = x + m.dx;
       let ny = y + m.dy;
       if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8) continue;
-      if (plateau[ny][nx].piece !== "" && plateau[ny][nx].isWhite === isWhiteTurn) continue;
+      if (plateau[ny][nx].piece !== "" && plateau[ny][nx].piece.isWhite === isWhiteTurn) continue;
       this.colorCell(x, y, nx, ny, isWhiteTurn);
     }
     if (!this.hasMoved) {

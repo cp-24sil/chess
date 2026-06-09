@@ -27,7 +27,7 @@ const kingMoves = [
 ];
 const CELL_SIZE = 50;
 const plateau = [[null], [null]];
-const pieceEat = [[], []];
+const pieceEat = [[null], [null]];
 const queenImgs = { w: null, b: null };
 let selectedPion = null;
 let enPassantTarget = null;
@@ -56,7 +56,6 @@ function init() {
       plateau[y][x] = {
         colorIndex: (x + y) % 2 !== 0 ? "#DEB887" : "white",
         piece: "",
-        isWhite: null
       };
     }
   }
@@ -64,32 +63,31 @@ function init() {
   refresh();
 }
 
-function makePieceImg(src, callback) {
+function makePieceImg(src) {
   let img = new Image();
-  img.onload = callback || refresh;
+  img.onload = refresh;
   img.src = src;
   return img;
 }
 
 function placePieces() {
-  const backRow = ["t", "c", "f", "Q", "K", "f", "c", "t"];
+  const borderRow = ["t", "c", "f", "Q", "K", "f", "c", "t"];
   for (let side = 0; side < 2; side++) {
     let isWhite = side === 1;
     let bOrW = isWhite ? "w" : "b";
     let y = isWhite ? 7 : 0;
     for (let x = 0; x < 8; x++) {
-      let pieceImg = makePieceImg(`./assets/img/${imgName(backRow[x])}-${bOrW}.svg`);
+      let pieceImg = makePieceImg(`./assets/img/${imgName(borderRow[x])}-${bOrW}.svg`);
       let p;
-      switch (backRow[x]) {
-        case "t": p = new tour(isWhite, x, y, pieceImg); break;
-        case "c": p = new cavalier(isWhite, x, y, pieceImg); break;
-        case "f": p = new fou(isWhite, x, y, pieceImg); break;
-        case "Q": p = new reine(isWhite, x, y, pieceImg); break;
-        case "K": p = new roi(isWhite, x, y, pieceImg); break;
+      switch (borderRow[x]) {
+        case "t": p = new tour(isWhite, x, y, pieceImg, lines); break;
+        case "c": p = new cavalier(isWhite, x, y, pieceImg, knightMoves); break;
+        case "f": p = new fou(isWhite, x, y, pieceImg, diags); break;
+        case "Q": p = new reine(isWhite, x, y, pieceImg, lines, diags); break;
+        case "K": p = new roi(isWhite, x, y, pieceImg, kingMoves); break;
       }
       plateau[y][x].piece = p;
-      plateau[y][x].isWhite = isWhite;
-      if (backRow[x] === "Q") {
+      if (borderRow[x] === "Q") {
         if (isWhite) queenImgs.w = pieceImg;
         else queenImgs.b = pieceImg;
       }
@@ -98,7 +96,6 @@ function placePieces() {
     let pawnImg = makePieceImg(`./assets/img/pawn-${bOrW}.svg`);
     for (let x = 0; x < 8; x++) {
       plateau[py][x].piece = new pion(isWhite, x, py, pawnImg);
-      plateau[py][x].isWhite = isWhite;
     }
   }
 }
@@ -174,7 +171,7 @@ function onClick(e) {
         }
       }
     }
-    selectedPion.piece.move(posX, posY);
+    isWhiteTurn = selectedPion.piece.move(posX, posY);
     selectedPion = null;
   } else {
     if (plateau[posY][posX].piece !== "" && plateau[posY][posX].piece.isWhite === isWhiteTurn) {
@@ -245,7 +242,7 @@ function isKingAttacked(x, y, isWhiteTurn) {
 }
 
 
-function checkGameState() {
+function checkGameState(isWhiteTurn) {
   let hasLegalMove = hasAnyLegalMove(isWhiteTurn);
   let kingX = -1
   let kingY = -1;

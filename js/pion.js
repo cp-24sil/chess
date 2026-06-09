@@ -10,15 +10,12 @@ class pion extends piece {
       if (enPassantTarget && posX === enPassantTarget.x && posY === enPassantTarget.y) {
         let capturedY = isWhiteTurn ? posY + 1 : posY - 1;
         plateau[capturedY][posX].piece = "";
-        plateau[capturedY][posX].isWhite = null;
       }
 
       let isDoubleMove = Math.abs(posY - selectedPion.piece.posY) === 2;
 
       plateau[selectedPion.piece.posY][selectedPion.piece.posX].piece = "";
-      plateau[selectedPion.piece.posY][selectedPion.piece.posX].isWhite = null;
       plateau[posY][posX].piece = selectedPion.piece;
-      plateau[posY][posX].isWhite = isWhiteTurn;
       selectedPion.piece.posX = posX;
       selectedPion.piece.posY = posY;
       selectedPion.piece.hasMoved = true;
@@ -31,21 +28,20 @@ class pion extends piece {
 
       if (posY === 0 || posY === 7) {
         plateau[posY][posX].piece = new reine(isWhiteTurn, posX, posY, getQueenImg(isWhiteTurn));
-        plateau[posY][posX].isWhite = isWhiteTurn;
         rebuild();
         refresh();
-        isWhiteTurn = !isWhiteTurn;
-        checkGameState();
-        return;
+        checkGameState(!isWhiteTurn);
+        return !isWhiteTurn;
       }
 
       rebuild();
-      isWhiteTurn = !isWhiteTurn;
-      checkGameState();
+      checkGameState(!isWhiteTurn);
       refresh();
+      return !isWhiteTurn;
     } else {
       rebuild();
       refresh();
+      return isWhiteTurn;
     }
   }
 
@@ -64,7 +60,7 @@ class pion extends piece {
     }
 
     if (x - 1 >= 0 && y + dir >= 0 && y + dir < 8) {
-      if (plateau[y + dir][x - 1].piece !== "" && plateau[y + dir][x - 1].isWhite !== isWhiteTurn) {
+      if (plateau[y + dir][x - 1].piece !== "" && plateau[y + dir][x - 1].piece.isWhite !== isWhiteTurn) {
         this.colorCell(x, y, x - 1, y + dir, isWhiteTurn);
       }
       if (enPassantTarget && x - 1 === enPassantTarget.x && y + dir === enPassantTarget.y) {
@@ -73,7 +69,7 @@ class pion extends piece {
     }
 
     if (x + 1 < 8 && y + dir >= 0 && y + dir < 8) {
-      if (plateau[y + dir][x + 1].piece !== "" && plateau[y + dir][x + 1].isWhite !== isWhiteTurn) {
+      if (plateau[y + dir][x + 1].piece !== "" && plateau[y + dir][x + 1].piece.isWhite !== isWhiteTurn) {
         this.colorCell(x, y, x + 1, y + dir, isWhiteTurn);
       }
       if (enPassantTarget && x + 1 === enPassantTarget.x && y + dir === enPassantTarget.y) {
