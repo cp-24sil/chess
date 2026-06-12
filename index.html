@@ -78,10 +78,10 @@
             transition: all 0.3s ease;
         }
     </style>
-
+    <script type="module" src="./js/app.js"></script>
 </head>
 
-<body>
+<body onload="init()">
     <div class="appBar">
         <h2>Jeu d'Échecs</h2>
     </div>
@@ -96,16 +96,18 @@
     <p id="turn">Au tour des Blancs</p>
     <p id="message"></p>
     <br>
-    <button onclick="init()">Nouvelle partie</button>
 
-    <script type="module" src="./ts/app.js" defer></script>
-    <script type="module" src="./ts/pion.js" defer></script>
-    <script type="module" src="./ts/tour.js" defer></script>
-    <script type="module" src="./ts/roi.js" defer></script>
-    <script type="module" src="./ts/reine.js" defer></script>
-    <script type="module" src="./ts/fou.js" defer></script>
-    <script type="module" src="./ts/cavalier.js" defer></script>
-    <script type="module" src="./ts/piece.js"></script>
+    <body>
+        <button id="btn-nouvelle-partie">Nouvelle partie</button>
+    </body>
+
+    <script type="module" src="./js/pion.js" defer></script>
+    <script type="module" src="./js/tour.js" defer></script>
+    <script type="module" src="./js/roi.js" defer></script>
+    <script type="module" src="./js/reine.js" defer></script>
+    <script type="module" src="./js/fou.js" defer></script>
+    <script type="module" src="./js/cavalier.js" defer></script>
+    <script type="module" src="./js/piece.js"></script>
 
 </body>
 

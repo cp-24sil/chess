@@ -1,4 +1,5 @@
-import { piece } from './piece';
+import { piece } from './piece.js';
+import { plateau } from './app.js';
 
 export class cavalier extends piece {
   moves: { dx: number, dy: number }[];
@@ -14,7 +15,8 @@ export class cavalier extends piece {
       let nx = x + m.dx;
       let ny = y + m.dy;
       if (nx < 0 || nx >= 8 || ny < 0 || ny >= 8) continue;
-      if (plateau[ny][nx].piece !== "" && plateau[ny][nx].piece.isWhite === isWhiteTurn) continue;
+      const currentPiece = plateau[ny]![nx]!.piece;
+      if (currentPiece !== "" && currentPiece.isWhite === isWhiteTurn) continue;
       this.colorCell(x, y, nx, ny, isWhiteTurn);
     }
   }

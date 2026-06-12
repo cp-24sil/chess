@@ -1,13 +1,9 @@
-// --- IMPORTS ---
-// On suppose que tes classes sont exportées par défaut ou nommées dans leurs fichiers respectifs
-import { tour } from "./tour";
-import { cavalier } from "./cavalier";
-import { fou } from "./fou";
-import { reine } from "./reine";
-import { roi } from "./roi";
-import { pion } from "./pion";
-
-// --- INTERFACES & TYPES ---
+import { tour } from "./tour.js";
+import { cavalier } from "./cavalier.js";
+import { fou } from "./fou.js";
+import { reine } from "./reine.js";
+import { roi } from "./roi.js";
+import { pion } from "./pion.js";
 export interface Piece {
   name: string;
   posX: number;
@@ -28,7 +24,6 @@ interface MoveDirection {
   dy: number;
 }
 
-// --- CONFIGURATION & ELEMENTS DOM ---
 const canvas = document.getElementById("display") as HTMLCanvasElement;
 const canvasPieceBlack = document.getElementById("displayPieceblack") as HTMLCanvasElement;
 const canvasPieceWhite = document.getElementById("displayPieceWhite") as HTMLCanvasElement;
@@ -41,12 +36,11 @@ const ctxPieceWhite = canvasPieceWhite.getContext("2d")!;
 
 const CELL_SIZE = 50;
 
-// --- DIRECTIONS DE DÉPLACEMENT ---
-const lines: MoveDirection[] = [
+export const lines: MoveDirection[] = [
   { dx: 0, dy: -1 }, { dx: 0, dy: 1 },
   { dx: -1, dy: 0 }, { dx: 1, dy: 0 }
 ];
-const diags: MoveDirection[] = [
+export const diags: MoveDirection[] = [
   { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
   { dx: -1, dy: 1 }, { dx: 1, dy: 1 }
 ];
@@ -62,24 +56,25 @@ const kingMoves: MoveDirection[] = [
   { dx: -1, dy: 1 }, { dx: 0, dy: 1 }, { dx: 1, dy: 1 }
 ];
 
-// --- ÉTAT DU JEU ---
-// Initialisation d'un plateau vide 8x8 de type ElemTableau
-const plateau: ElemTableau[][] = Array.from({ length: 8 }, () =>
+export const plateau: ElemTableau[][] = Array.from({ length: 8 }, () =>
   Array.from({ length: 8 }, () => ({ colorIndex: "", piece: "" }))
 );
 
 const pieceEat: Piece[] = [];
 const queenImgs: { w: HTMLImageElement | null; b: HTMLImageElement | null } = { w: null, b: null };
-let selectedPion: { piece: Piece } | null = null;
-let enPassantTarget: null = null; // À typer plus précisément si utilisé plus tard
-let isWhiteTurn = true;
+export let selectedPion: { piece: Piece } | null = null;
+export let enPassantTarget: null | { x: number, y: number, pawnY: number } = null;
+export function setEnPassantTarget(target: { x: number; y: number, pawnY: number } | null): void {
+  enPassantTarget = target;
+}
+export let isWhiteTurn = true;
 let gameOver = false;
 
-function getQueenImg(isWhite: boolean): HTMLImageElement | null {
+export function getQueenImg(isWhite: boolean): HTMLImageElement | null {
   return isWhite ? queenImgs.w : queenImgs.b;
 }
 
-function init(): void {
+export function init(): void {
   selectedPion = null;
   enPassantTarget = null;
   isWhiteTurn = true;
@@ -91,7 +86,7 @@ function init(): void {
   ctxPieceWhite.clearRect(0, 0, canvasPieceWhite.width, canvasPieceWhite.height);
   ctxPieceBlack.clearRect(0, 0, canvasPieceBlack.width, canvasPieceBlack.height);
 
-  pieceEat.length = 0; // Vide proprement le tableau des pièces mangées
+  pieceEat.length = 0;
 
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
@@ -104,6 +99,16 @@ function init(): void {
   placePieces();
   refresh();
 }
+(window as any).init = init;
+document.addEventListener("DOMContentLoaded", () => {
+  init();
+
+  const newGameBtn = document.getElementById("btn-nouvelle-partie");
+  if (newGameBtn) {
+    newGameBtn.addEventListener("click", init);
+  }
+});
+
 
 function makePieceImg(src: string): HTMLImageElement {
   const img = new Image();
@@ -153,7 +158,7 @@ function imgName(name: string): string {
   return map[name] || name;
 }
 
-function refresh(): void {
+export function refresh(): void {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
@@ -170,7 +175,7 @@ function refresh(): void {
   }
 }
 
-function rebuild(): void {
+export function rebuild(): void {
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
       plateau[y]![x]!.colorIndex = (x + y) % 2 !== 0 ? "#DEB887" : "white";
@@ -243,7 +248,7 @@ function showRoutes(x: number, y: number): void {
   }
 }
 
-function isKingAttacked(x: number, y: number, isWhiteTurn: boolean): boolean {
+export function isKingAttacked(x: number, y: number, isWhiteTurn: boolean): boolean {
   for (const d of lines) {
     let nx = x + d.dx;
     let ny = y + d.dy;
@@ -304,7 +309,7 @@ function isKingAttacked(x: number, y: number, isWhiteTurn: boolean): boolean {
   return false;
 }
 
-function checkGameState(isWhiteTurn: boolean): void {
+export function checkGameState(isWhiteTurn: boolean): void {
   const hasLegalMove = hasAnyLegalMove(isWhiteTurn);
   let kingX = -1;
   let kingY = -1;
